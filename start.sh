@@ -1,94 +1,79 @@
 #!/bin/bash
 
-# Fix socket
-rm -f /run/fail2ban/*
-
-if ! mountpoint -q /nextcloud; then
-    echo "/nextcloud is not a mountpoint which it must be!"
+if ! mountpoint -q /data; then
+    echo "/data is not a mountpoint!"
     exit 1
 fi
 
-while ! [ -f /nextcloud/data/nextcloud.log ]; do
-    echo "Waiting for /nextcloud/data/nextcloud.log to become available"
+while ! nc -z nextcloud-aio-nextcloud 9001; do
+    echo "Waiting for nextcloud to start"
     sleep 5
 done
 
-cat << FILTER > /etc/fail2ban/filter.d/nextcloud.conf
-[INCLUDES]
-before = common.conf
+set -x
+# Reset the file
+sed -i "/(GEOFILTER)/,$ d" /Cadddyfile
 
-[Definition]
-_groupsre = (?:(?:,?\s*"\w+":(?:"[^"]+"|\w+))*)
-failregex = ^\{%(_groupsre)s,?\s*"remoteAddr":"<HOST>"%(_groupsre)s,?\s*"message":"Login failed:
-            ^\{%(_groupsre)s,?\s*"remoteAddr":"<HOST>"%(_groupsre)s,?\s*"message":"Trusted domain error.
-datepattern = ,?\s*"time"\s*:\s*"%%Y-%%m-%%d[T ]%%H:%%M:%%S(%%z)?"
-FILTER
-
-cat << JAIL > /etc/fail2ban/jail.d/nextcloud.local
-[nextcloud]
-enabled = true
-port = 80,443,8080,8443,3478
-protocol = tcp,udp
-filter = nextcloud
-banaction = %(banaction_allports)s
-maxretry = 3
-bantime = 14400
-findtime = 14400
-logpath = /nextcloud/data/nextcloud.log
-chain=DOCKER-USER
-JAIL
-
-if [ -f /vaultwarden/vaultwarden.log ]; then
-    echo "Configuring vaultwarden for logs"
-    # Vaultwarden conf
-    cat << BW_CONF > /etc/fail2ban/filter.d/vaultwarden.conf
-[INCLUDES]
-before = common.conf
-
-[Definition]
-failregex = ^.*Username or password is incorrect\. Try again\. IP: <ADDR>\. Username:.*$
-ignoreregex =
-BW_CONF
-
-    # Vaultwarden jail
-    cat << BW_JAIL_CONF > /etc/fail2ban/jail.d/vaultwarden.local
-[vaultwarden]
-enabled = true
-port = 80,443,8812
-protocol = tcp,udp
-filter = vaultwarden
-banaction = %(banaction_allports)s
-logpath = /vaultwarden/vaultwarden.log
-maxretry = 3
-bantime = 14400
-findtime = 14400
-chain=DOCKER-USER
-BW_JAIL_CONF
-
-    # Vaultwarden-admin conf
-    cat << BWA_CONF > /etc/fail2ban/filter.d/vaultwarden-admin.conf
-[INCLUDES]
-before = common.conf
-
-[Definition]
-failregex = ^.*Invalid admin token\. IP: <ADDR>.*$
-ignoreregex =
-BWA_CONF
-
-    # Vaultwarden-admin jail
-    cat << BWA_JAIL_CONF > /etc/fail2ban/jail.d/vaultwarden-admin.local
-[vaultwarden-admin]
-enabled = true
-port = 80,443,8812
-protocol = tcp,udp
-filter = vaultwarden-admin
-banaction = %(banaction_allports)s
-logpath = /vaultwarden/vaultwarden.log
-maxretry = 3
-bantime = 14400
-findtime = 14400
-chain=DOCKER-USER
-BWA_JAIL_CONF
+ALLOW_CONTRIES="$(head -n 1 filename /nextcloud/admin/files/nextcloud-aio-caddy/allowed-countries.txt)"
+if echo "$ALLOW_CONTRIES" | grep -q '^[A-Z ]\+$'; then
+    FILTER_SET=1
+fi
+if [ -f "/nextcloud/admin/files/nextcloud-aio-caddy/GeoLite2-Country.mmdb" ]; then
+    rm -f /data/GeoLite2-Country.mmdb
+    cp /nextcloud/admin/files/nextcloud-aio-caddy/GeoLite2-Country.mmdb /data/
+    FILE_THERE=1
 fi
 
-fail2ban-server -f --logtarget stderr --loglevel info 
+if [ "$FILTER_SET" = 1 ] && [ "$FILE_THERE" = 1 ]; then
+    cat << CADDY >> /Caddyfile
+(GEOFILTER) {
+    @geofilter {
+        not maxmind_geolocation {
+            db_path "/data/GeoLite2-Country.mmdb"
+            allow_countries $ALLOW_CONTRIES
+        }
+        not remote_ip private_ranges
+    }
+    respond @geofilter 403
+}
+CADDY
+fi
+
+cat << CADDY >> /Caddyfile
+https://{\$NC_DOMAIN}:443 {
+    # import GEOFILTER
+    reverse_proxy nextcloud-aio-apache:{\$APACHE_PORT}
+
+    # TLS options
+    tls {
+        issuer acme {
+            disable_http_challenge
+        }
+    }
+}
+CADDY
+
+if [ -n "$(dig A +short nextcloud-aio-vaultwarden)" ]; then
+    cat << CADDY >> /Caddyfile
+https://bw.{\$NC_DOMAIN}:443 {
+    # import GEOFILTER
+    reverse_proxy nextcloud-aio-vaultwarden:8812
+
+    # TLS options
+    tls {
+        issuer acme {
+            disable_http_challenge
+        }
+    }
+}
+CADDY
+fi
+
+if [ "$FILTER_SET" = 1 ] && [ "$FILE_THERE" = 1 ]; then
+    sed -i "s|# import GEOFILTER|import GEOFILTER|" /Caddyfile
+fi
+set +x
+
+caddy fmt --overwrite /Caddyfile
+
+caddy run --config /Caddyfile
