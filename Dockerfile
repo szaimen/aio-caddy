@@ -31,7 +31,7 @@ RUN set -ex; \
 
 VOLUME /data
 
-COPY --from=go /go/bin/caddy /usr/local/bin/caddy
+COPY --from=go /go/caddy /usr/local/bin/caddy
 COPY --chmod=775 start.sh /start.sh
 COPY --chmod=664 Caddyfile /Caddyfile
 
