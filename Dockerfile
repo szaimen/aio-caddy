@@ -17,7 +17,6 @@ FROM alpine:3.18.4
 # hadolint ignore=DL3018
 RUN set -ex; \
     apk add --no-cache shadow; \
-    deluser www-data; \
     groupmod -g 333 xfs; \
     usermod -u 333 -g 333 xfs; \
     addgroup -g 33 -S www-data; \
