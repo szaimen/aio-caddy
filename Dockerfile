@@ -7,7 +7,8 @@ ENV CADDY_HASH 29233e285b83dfa070d1f6889c021cb32c161b89
 # hadolint ignore=DL3018
 RUN set -ex; \
     apk add --no-cache \
-        build-base; \
+        build-base \
+        git; \
     go install github.com/caddyserver/xcaddy/cmd/xcaddy@"$XCADDY_VERSION"; \
     chmod +x /go/bin/xcaddy; \
     /go/bin/xcaddy build --with github.com/porech/caddy-maxmind-geolocation@"$CADDY_HASH"
