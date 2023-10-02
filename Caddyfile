@@ -1,0 +1,11 @@
+{
+    auto_https disable_redirects
+
+    storage file_system {
+        root /data
+    }
+
+    log {
+        level ERROR
+    }
+}

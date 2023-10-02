@@ -38,5 +38,5 @@ jobs:
           context: './'
           no-cache: true
           file: 'Dockerfile'
-          tags: szaimen/aio-fail2ban:${{ github.event.inputs.tagName }}
+          tags: szaimen/aio-caddy:${{ github.event.inputs.tagName }}
           provenance: false
