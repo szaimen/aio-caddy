@@ -14,6 +14,11 @@ set -x
 # Reset the file
 sed -i "/(GEOFILTER)/,$ d" /Cadddyfile
 
+while ! [ -f /nextcloud/admin/files/nextcloud-aio-caddy/allowed-countries.txt ]; do
+    echo "Waiting for allowed-countries.txt file to be created"
+    sleep 5
+done
+
 ALLOW_CONTRIES="$(head -n 1 filename /nextcloud/admin/files/nextcloud-aio-caddy/allowed-countries.txt)"
 if echo "$ALLOW_CONTRIES" | grep -q '^[A-Z ]\+$'; then
     FILTER_SET=1
