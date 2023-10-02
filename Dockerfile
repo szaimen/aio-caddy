@@ -24,7 +24,7 @@ RUN set -ex; \
     addgroup -g 33 -S www-data; \
     adduser -u 33 -D -S -G www-data www-data; \
     apk del shadow; \
-    apk add --no-cache tzdata bash bind-tools netcat-openbsd; \
+    apk add --no-cache tzdata bash bind-tools netcat-openbsd util-linux-misc; \
     mkdir /data; \
     chown 33:33 -R /data; \
     chmod 770 -R /data
