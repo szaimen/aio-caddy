@@ -11,15 +11,12 @@ while ! nc -z nextcloud-aio-nextcloud 9001; do
 done
 
 set -x
-# Reset the file
-sed -i "/(GEOFILTER)/,$ d" /Cadddyfile
-
 while ! [ -f /nextcloud/admin/files/nextcloud-aio-caddy/allowed-countries.txt ]; do
     echo "Waiting for allowed-countries.txt file to be created"
     sleep 5
 done
 
-ALLOW_CONTRIES="$(head -n 1 filename /nextcloud/admin/files/nextcloud-aio-caddy/allowed-countries.txt)"
+ALLOW_CONTRIES="$(head -n 1 /nextcloud/admin/files/nextcloud-aio-caddy/allowed-countries.txt)"
 if echo "$ALLOW_CONTRIES" | grep -q '^[A-Z ]\+$'; then
     FILTER_SET=1
 fi
@@ -29,7 +26,7 @@ if [ -f "/nextcloud/admin/files/nextcloud-aio-caddy/GeoLite2-Country.mmdb" ]; th
     FILE_THERE=1
 fi
 
-if [ -n "$(dig A +short nextcloud-aio-vaultwarden)" ]; then
+if [ -n "$(dig A +short nextcloud-aio-vaultwarden)" ] && ! grep -q nextcloud-aio-vaultwarden /Caddyfile; then
     cat << CADDY >> /Caddyfile
 https://bw.{\$NC_DOMAIN}:443 {
     # import GEOFILTER
@@ -46,7 +43,9 @@ CADDY
 fi
 
 if [ "$FILTER_SET" = 1 ] && [ "$FILE_THERE" = 1 ]; then
-    sed -i "s|# import GEOFILTER|import GEOFILTER|" /Caddyfile
+    sed -i "s|# import GEOFILTER|  import GEOFILTER|" /Caddyfile
+else
+    sed -i "s|  import GEOFILTER|# import GEOFILTER|" /Caddyfile
 fi
 set +x
 
