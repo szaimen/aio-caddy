@@ -43,10 +43,11 @@ CADDY
 fi
 
 if [ "$FILTER_SET" = 1 ] && [ "$FILE_THERE" = 1 ]; then
-    sed -i "s|# import GEOFILTER|  import GEOFILTER|" /Caddyfile
+    CADDYFILE="$(sed "s|# import GEOFILTER|  import GEOFILTER|" /Caddyfile)"
 else
-    sed -i "s|  import GEOFILTER|# import GEOFILTER|" /Caddyfile
+    CADDYFILE="$(sed "s|  import GEOFILTER|# import GEOFILTER|" /Caddyfile)"
 fi
+echo "$CADDYFILE" > /tmp/Caddyfile
 set +x
 
 caddy fmt --overwrite /Caddyfile
