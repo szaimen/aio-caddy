@@ -14,7 +14,7 @@
     @geofilter {
         not maxmind_geolocation {
             db_path "/data/GeoLite2-Country.mmdb"
-            allow_countries $ALLOW_CONTRIES
+            allow_countries
         }
         not remote_ip private_ranges
     }
