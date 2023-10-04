@@ -2,10 +2,33 @@
     auto_https disable_redirects
 
     storage file_system {
-        root /data
+        root /data/caddy
     }
 
     log {
         level ERROR
+    }
+}
+
+(GEOFILTER) {
+    @geofilter {
+        not maxmind_geolocation {
+            db_path "/data/GeoLite2-Country.mmdb"
+            allow_countries $ALLOW_CONTRIES
+        }
+        not remote_ip private_ranges
+    }
+    respond @geofilter 403
+}
+
+https://{$NC_DOMAIN}:443 {
+    # import GEOFILTER
+    reverse_proxy nextcloud-aio-apache:{$APACHE_PORT}
+
+    # TLS options
+    tls {
+        issuer acme {
+            disable_http_challenge
+        }
     }
 }
