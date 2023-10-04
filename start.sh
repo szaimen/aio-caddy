@@ -44,11 +44,10 @@ fi
 
 if [ "$FILTER_SET" = 1 ] && [ "$FILE_THERE" = 1 ]; then
     CADDYFILE="$(sed "s|allow_countries.*|allow_countries $ALLOW_CONTRIES|;s|# import GEOFILTER|  import GEOFILTER|" /Caddyfile)"
-    CADDYFILE="$(echo "$CADDYFILE" | sed "s|# import GEOFILTER|  import GEOFILTER|")"
 else
     CADDYFILE="$(sed "s|  import GEOFILTER|# import GEOFILTER|" /Caddyfile)"
 fi
-echo "$CADDYFILE" > /tmp/Caddyfile
+echo "$CADDYFILE" > /Caddyfile
 set +x
 
 caddy fmt --overwrite /Caddyfile
