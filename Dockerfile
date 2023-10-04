@@ -25,7 +25,7 @@ RUN set -ex; \
     adduser -u 33 -D -S -G www-data www-data; \
     apk del shadow; \
     apk add --no-cache tzdata bash bind-tools netcat-openbsd util-linux-misc; \
-    mkdir /data; \
+    mkdir -p /data/caddy; \
     chown 33:33 -R /data; \
     chmod 770 -R /data
 
@@ -33,7 +33,7 @@ VOLUME /data
 
 COPY --from=go /go/caddy /usr/local/bin/caddy
 COPY --chmod=775 start.sh /start.sh
-COPY --chmod=664 Caddyfile /Caddyfile
+COPY --chown=33:33 Caddyfile /Caddyfile
 
 USER www-data
 ENTRYPOINT [ "/start.sh" ]

@@ -29,35 +29,6 @@ if [ -f "/nextcloud/admin/files/nextcloud-aio-caddy/GeoLite2-Country.mmdb" ]; th
     FILE_THERE=1
 fi
 
-if [ "$FILTER_SET" = 1 ] && [ "$FILE_THERE" = 1 ]; then
-    cat << CADDY >> /Caddyfile
-(GEOFILTER) {
-    @geofilter {
-        not maxmind_geolocation {
-            db_path "/data/GeoLite2-Country.mmdb"
-            allow_countries $ALLOW_CONTRIES
-        }
-        not remote_ip private_ranges
-    }
-    respond @geofilter 403
-}
-CADDY
-fi
-
-cat << CADDY >> /Caddyfile
-https://{\$NC_DOMAIN}:443 {
-    # import GEOFILTER
-    reverse_proxy nextcloud-aio-apache:{\$APACHE_PORT}
-
-    # TLS options
-    tls {
-        issuer acme {
-            disable_http_challenge
-        }
-    }
-}
-CADDY
-
 if [ -n "$(dig A +short nextcloud-aio-vaultwarden)" ]; then
     cat << CADDY >> /Caddyfile
 https://bw.{\$NC_DOMAIN}:443 {
