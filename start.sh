@@ -42,6 +42,13 @@ https://bw.{\$NC_DOMAIN}:443 {
 CADDY
 fi
 
+mkdir -p /data/caddy-imports
+if ! grep -q "/data/caddy-imports" /Caddyfile; then
+    echo 'import /data/caddy-imports/*' >> /Caddyfile
+    # Make sure that the caddy-imports dir is not empty
+    echo "# empty file so that caddy does not print a warning" > /data/caddy-imports/empty
+fi
+
 if [ "$FILTER_SET" = 1 ] && [ "$FILE_THERE" = 1 ]; then
     CADDYFILE="$(sed "s|allow_countries.*|allow_countries $ALLOW_CONTRIES|;s|# import GEOFILTER|  import GEOFILTER|" /Caddyfile)"
 else
