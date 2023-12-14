@@ -30,7 +30,12 @@ if [ -n "$(dig A +short nextcloud-aio-vaultwarden)" ] && ! grep -q nextcloud-aio
     cat << CADDY >> /Caddyfile
 https://bw.{\$NC_DOMAIN}:443 {
     # import GEOFILTER
-    reverse_proxy nextcloud-aio-vaultwarden:8812
+    @notblacklisted {
+        not {
+            path /admin*
+        }
+    }
+    reverse_proxy @notblacklisted nextcloud-aio-vaultwarden:8812
 
     # TLS options
     tls {
