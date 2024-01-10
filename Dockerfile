@@ -1,5 +1,5 @@
 
-FROM golang:1.21.5-alpine3.18 as go
+FROM golang:1.21.6-alpine3.18 as go
 
 ENV XCADDY_VERSION v0.3.5
 ENV CADDY_HASH 29233e285b83dfa070d1f6889c021cb32c161b89
