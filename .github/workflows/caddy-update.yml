@@ -1,0 +1,43 @@
+name: caddy-update
+
+on:
+  workflow_dispatch:
+  schedule:
+  - cron:  '00 12 * * *'
+
+jobs:
+  caddy-update:
+    name: update caddy
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4
+    - name: Run caddy-container-update
+      run: |
+        # Xcaddy
+        xcaddy_version="$(
+          git ls-remote https://github.com/caddyserver/xcaddy v* \
+            | cut -d/ -f3 \
+            | sort -V \
+            | grep -E "^v[0-9\.]+$" \
+            | tail -1
+        )"
+        sed -i "s|^ENV XCADDY_VERSION.*$|ENV XCADDY_VERSION $xcaddy_version|" ./Dockerfile
+
+        # caddy_hash
+        caddy_hash="$(
+          git ls-remote https://github.com/porech/caddy-maxmind-geolocation master \
+            | cut -f1 \
+            | tail -1
+        )"
+        sed -i "s|^ENV CADDY_HASH.*$|ENV CADDY_HASH $caddy_hash|" ./Dockerfile
+
+    - name: Create Pull Request
+      uses: peter-evans/create-pull-request@v5
+      with:
+        commit-message: caddy-update automated change
+        signoff: true
+        title: caddy container update
+        body: Automated caddy container update
+        labels: dependencies, 3. to review
+        milestone: next
+        branch: caddy-container-update
