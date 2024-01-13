@@ -5,6 +5,10 @@
         root /data/caddy
     }
 
+    servers {
+        trusted_proxies placeholder
+    }
+
     log {
         level ERROR
     }

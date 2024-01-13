@@ -16,6 +16,13 @@ while ! [ -f /nextcloud/admin/files/nextcloud-aio-caddy/allowed-countries.txt ];
     sleep 5
 done
 
+# Get ipv4-address of caddy
+IPv4_ADDRESS="$(dig nextcloud-aio-caddy A +short +search | head -1)"
+# Bring it in CIDR notation
+# shellcheck disable=SC2001
+IPv4_ADDRESS="$(echo "$IPv4_ADDRESS" | sed 's|[0-9]\+$|1/32|')"
+sed -i "s|trusted_proxies.*|trusted_proxies static $IPv4_ADDRESS|" /Caddyfile
+
 ALLOW_CONTRIES="$(head -n 1 /nextcloud/admin/files/nextcloud-aio-caddy/allowed-countries.txt)"
 if echo "$ALLOW_CONTRIES" | grep -q '^[A-Z ]\+$'; then
     FILTER_SET=1
