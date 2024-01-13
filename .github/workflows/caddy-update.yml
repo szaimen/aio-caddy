@@ -13,6 +13,8 @@ jobs:
     - uses: actions/checkout@v4
     - name: Run caddy-container-update
       run: |
+        set -x
+
         # Xcaddy
         xcaddy_version="$(
           git ls-remote https://github.com/caddyserver/xcaddy v* \
