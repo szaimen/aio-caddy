@@ -31,6 +31,8 @@ jobs:
         )"
         sed -i "s|^ENV CADDY_HASH.*$|ENV CADDY_HASH $caddy_hash|" ./Dockerfile
 
+        cat ./Dockerfile
+
     - name: Create Pull Request
       uses: peter-evans/create-pull-request@v5
       with:
