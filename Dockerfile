@@ -13,7 +13,7 @@ RUN set -ex; \
     chmod +x /go/bin/xcaddy; \
     /go/bin/xcaddy build --with github.com/porech/caddy-maxmind-geolocation@"$CADDY_HASH"
 
-FROM alpine:3.18.5
+FROM alpine:3.19.1
 
 # hadolint ignore=DL3018
 RUN set -ex; \
