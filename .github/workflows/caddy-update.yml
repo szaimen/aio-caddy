@@ -15,16 +15,6 @@ jobs:
       run: |
         set -x
 
-        # Xcaddy
-        xcaddy_version="$(
-          git ls-remote https://github.com/caddyserver/xcaddy v* \
-            | cut -d/ -f3 \
-            | sort -V \
-            | grep -E "^v[0-9\.]+$" \
-            | tail -1
-        )"
-        sed -i "s|^ENV XCADDY_VERSION.*$|ENV XCADDY_VERSION $xcaddy_version|" ./Dockerfile
-
         # caddy_hash
         caddy_hash="$(
           git ls-remote https://github.com/porech/caddy-maxmind-geolocation master \
