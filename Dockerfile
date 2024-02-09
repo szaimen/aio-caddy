@@ -1,17 +1,9 @@
+FROM caddy:2.7.6-builder-alpine AS builder
 
-FROM golang:1.22.0-alpine3.18 as go
-
-ENV XCADDY_VERSION v0.3.5
 ENV CADDY_HASH 29233e285b83dfa070d1f6889c021cb32c161b89
 
-# hadolint ignore=DL3018
 RUN set -ex; \
-    apk add --no-cache \
-        build-base \
-        git; \
-    go install github.com/caddyserver/xcaddy/cmd/xcaddy@"$XCADDY_VERSION"; \
-    chmod +x /go/bin/xcaddy; \
-    /go/bin/xcaddy build --with github.com/porech/caddy-maxmind-geolocation@"$CADDY_HASH"
+    xcaddy build --with github.com/porech/caddy-maxmind-geolocation@"$CADDY_HASH"
 
 FROM alpine:3.19.1
 
@@ -31,7 +23,7 @@ RUN set -ex; \
 
 VOLUME /data
 
-COPY --from=go /go/caddy /usr/local/bin/caddy
+COPY --from=builder /usr/bin/caddy /usr/local/bin/caddy
 COPY --chmod=775 start.sh /start.sh
 COPY --chown=33:33 Caddyfile /Caddyfile
 
