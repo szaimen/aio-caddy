@@ -50,7 +50,7 @@ https://bw.{\$NC_DOMAIN}:443 {
 CADDY
 fi
 
-if [ -n "$(dig A +short nextcloud-aio-stalwart)" ] && ! grep -q "mail.$NC_DOMAIN" /Caddyfile; then
+if [ -n "$(dig A +short nextcloud-aio-stalwart)" ] && ! grep -q "mail.{\$NC_DOMAIN}" /Caddyfile; then
     cat << CADDY >> /Caddyfile
 https://mail.{\$NC_DOMAIN}:443 {
     # TLS options
