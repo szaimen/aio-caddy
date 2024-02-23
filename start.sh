@@ -65,7 +65,7 @@ fi
 
 if [ -n "$(dig A +short nextcloud-aio-jellyfin)" ] && ! grep -q nextcloud-aio-jellyfin /Caddyfile; then
     cat << CADDY >> /Caddyfile
-https://jellyfin.{\$NC_DOMAIN}:443 {
+https://media.{\$NC_DOMAIN}:443 {
     reverse_proxy nextcloud-aio-jellyfin:8096
 
     # TLS options
