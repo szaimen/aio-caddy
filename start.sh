@@ -66,6 +66,7 @@ fi
 if [ -n "$(dig A +short nextcloud-aio-jellyfin)" ] && ! grep -q nextcloud-aio-jellyfin /Caddyfile; then
     cat << CADDY >> /Caddyfile
 https://media.{\$NC_DOMAIN}:443 {
+    # import GEOFILTER
     reverse_proxy nextcloud-aio-jellyfin:8096
 
     # TLS options
