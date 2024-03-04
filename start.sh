@@ -63,11 +63,11 @@ https://mail.{\$NC_DOMAIN}:443 {
 CADDY
 fi
 
-if [ -n "$(dig A +short nextcloud-aio-jellyfin)" ] && ! grep -q nextcloud-aio-jellyfin /Caddyfile; then
+if nc -z host.docker.internal 8096 && ! grep -q "host.docker.internal:8096" /Caddyfile; then
     cat << CADDY >> /Caddyfile
 https://media.{\$NC_DOMAIN}:443 {
     # import GEOFILTER
-    reverse_proxy nextcloud-aio-jellyfin:8096
+    reverse_proxy host.docker.internal:8096
 
     # TLS options
     tls {
