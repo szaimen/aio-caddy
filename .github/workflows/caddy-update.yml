@@ -34,4 +34,5 @@ jobs:
         body: Automated caddy container update
         labels: dependencies, 3. to review
         milestone: next
+        token: ${{ secrets.GITHUB_TOKEN }}
         branch: caddy-container-update
