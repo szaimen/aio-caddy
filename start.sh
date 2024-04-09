@@ -63,7 +63,7 @@ https://mail.{\$NC_DOMAIN}:443 {
 CADDY
 fi
 
-if [ -n "$(dig A +short nextcloud-aio-vaultwarden)" ] && ! grep -q nextcloud-aio-lldap /Caddyfile; then
+if [ -n "$(dig A +short nextcloud-aio-lldap)" ] && ! grep -q nextcloud-aio-lldap /Caddyfile; then
     cat << CADDY >> /Caddyfile
 https://ldap.{\$NC_DOMAIN}:443 {
     # import GEOFILTER
