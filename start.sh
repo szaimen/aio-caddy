@@ -54,7 +54,7 @@ if [ -n "$(dig A +short nextcloud-aio-stalwart)" ] && ! grep -q "mail.{\$NC_DOMA
     cat << CADDY >> /Caddyfile
 https://mail.{\$NC_DOMAIN}:443 {
     # import GEOFILTER
-    reverse_proxy nextcloud-aio-stalwart:10003
+    reverse_proxy nextcloud-aio-stalwart:8080
 
     # TLS options
     tls {
