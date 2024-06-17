@@ -82,6 +82,22 @@ https://ldap.{\$NC_DOMAIN}:443 {
 CADDY
 fi
 
+if [ -n "$(dig A +short nextcloud-aio-nocodb)" ] && ! grep -q nextcloud-aio-nocodb /Caddyfile; then
+    cat << CADDY >> /Caddyfile
+https://tables.{\$NC_DOMAIN}:443 {
+    # import GEOFILTER
+    reverse_proxy nextcloud-aio-nocodb:10028
+
+    # TLS options
+    tls {
+        issuer acme {
+            disable_http_challenge
+        }
+    }
+}
+CADDY
+fi
+
 if nc -z host.docker.internal 8096 && ! grep -q "host.docker.internal:8096" /Caddyfile; then
     cat << CADDY >> /Caddyfile
 https://media.{\$NC_DOMAIN}:443 {
