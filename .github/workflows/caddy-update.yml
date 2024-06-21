@@ -25,7 +25,7 @@ jobs:
             | cut -f1 \
             | tail -1
         )"
-        sed -i "s|^ENV CADDY_HASH.*$|ENV CADDY_HASH $caddy_hash|" ./Dockerfile
+        sed -i "s|^ENV CADDY_HASH.*$|ENV CADDY_HASH=$caddy_hash|" ./Dockerfile
 
         cat ./Dockerfile
 

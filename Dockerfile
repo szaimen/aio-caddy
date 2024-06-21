@@ -1,6 +1,6 @@
 FROM caddy:2.8.4-builder-alpine AS builder
 
-ENV CADDY_HASH 8794ba5a3a9ff1cac49f9c40aed2841646de0324
+ENV CADDY_HASH=8794ba5a3a9ff1cac49f9c40aed2841646de0324
 
 RUN set -ex; \
     xcaddy build --with github.com/porech/caddy-maxmind-geolocation@"$CADDY_HASH"
@@ -10,8 +10,6 @@ FROM alpine:3.20.1
 # hadolint ignore=DL3018
 RUN set -ex; \
     apk add --no-cache shadow; \
-    groupmod -g 333 xfs; \
-    usermod -u 333 -g 333 xfs; \
     groupdel www-data; \
     addgroup -g 33 -S www-data; \
     adduser -u 33 -D -S -G www-data www-data; \
