@@ -27,7 +27,13 @@
 
 https://{$NC_DOMAIN}:443 {
     # import GEOFILTER
-    reverse_proxy nextcloud-aio-apache:{$APACHE_PORT}
+    reverse_proxy {
+        to nextcloud-aio-apache:{$APACHE_PORT} nextcloud-aio-domaincheck:{$APACHE_PORT}
+        lb_policy first
+        health_uri /
+        health_port {$APACHE_PORT}
+        health_interval 60s
+    }
 
     # TLS options
     tls {
