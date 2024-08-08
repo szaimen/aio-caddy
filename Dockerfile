@@ -1,6 +1,6 @@
 FROM caddy:2.8.4-builder-alpine AS builder
 
-ENV CADDY_HASH=8794ba5a3a9ff1cac49f9c40aed2841646de0324
+ENV CADDY_HASH=c7dd9b5c8231800f7cd959d195e19d3d32bb38c3
 
 RUN set -ex; \
     xcaddy build --with github.com/porech/caddy-maxmind-geolocation@"$CADDY_HASH"
