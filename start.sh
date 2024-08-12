@@ -20,7 +20,7 @@ done
 IPv4_ADDRESS="$(dig nextcloud-aio-caddy A +short +search | head -1)"
 # Bring it in CIDR notation
 # shellcheck disable=SC2001
-IPv4_ADDRESS="$(echo "$IPv4_ADDRESS" | sed 's|[0-9]\+$|1/32|')"
+IPv4_ADDRESS="$(echo "$IPv4_ADDRESS" | sed 's|[0-9]\+$|0/16|')"
 CADDYFILE="$(sed "s|trusted_proxies.*|trusted_proxies static $IPv4_ADDRESS|" /Caddyfile)"
 echo "$CADDYFILE" > /Caddyfile
 
