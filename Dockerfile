@@ -5,7 +5,7 @@ ENV CADDY_HASH=c7dd9b5c8231800f7cd959d195e19d3d32bb38c3
 RUN set -ex; \
     xcaddy build --with github.com/porech/caddy-maxmind-geolocation@"$CADDY_HASH"
 
-FROM alpine:3.20.3
+FROM alpine:3.21.0
 
 # hadolint ignore=DL3018
 RUN set -ex; \
