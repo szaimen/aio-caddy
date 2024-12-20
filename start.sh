@@ -82,6 +82,38 @@ https://mail.{\$NC_DOMAIN}:443 {
         }
     }
 }
+https://autoconfig.{\$NC_DOMAIN}.fr:443 {
+    # import GEOFILTER
+    route /mail/config-v1.1.xml {
+        reverse_proxy nextcloud-aio-stalwart:10003
+    }
+    route {
+        abort
+    }
+    
+    # TLS options
+    tls {
+        issuer acme {
+            disable_http_challenge
+        }
+    }
+}
+https://autodiscover.{\$NC_DOMAIN}.fr:443 {
+    # import GEOFILTER
+    route /autodiscover/autodiscover.xml {
+        reverse_proxy nextcloud-aio-stalwart:10003
+    }
+    route {
+        abort
+    }
+    
+    # TLS options
+    tls {
+        issuer acme {
+            disable_http_challenge
+        }
+    }
+}
 CADDY
 fi
 
