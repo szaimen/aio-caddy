@@ -83,7 +83,6 @@ https://mail.{\$NC_DOMAIN}:443 {
     }
 }
 https://autoconfig.{\$NC_DOMAIN}.fr:443 {
-    # import GEOFILTER
     route /mail/config-v1.1.xml {
         reverse_proxy nextcloud-aio-stalwart:10003
     }
@@ -99,7 +98,6 @@ https://autoconfig.{\$NC_DOMAIN}.fr:443 {
     }
 }
 https://autodiscover.{\$NC_DOMAIN}.fr:443 {
-    # import GEOFILTER
     route /autodiscover/autodiscover.xml {
         reverse_proxy nextcloud-aio-stalwart:10003
     }
