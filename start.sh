@@ -163,7 +163,7 @@ https://media.{\$NC_DOMAIN}:443 {
 CADDY
 fi
 
-if [ -n "$(dig A +short nextcloud-aio-jellyseerr)" ] && ! grep -q "requests.{\$NC_DOMAIN}" /Caddyfile; then
+if [ -n "$(dig A +short nextcloud-aio-jellyseerr)" ] && ! grep -q nextcloud-aio-jellyseerr /Caddyfile; then
     cat << CADDY >> /Caddyfile
 https://requests.{\$NC_DOMAIN}:443 {
     # import GEOFILTER
