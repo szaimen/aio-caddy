@@ -163,6 +163,22 @@ https://media.{\$NC_DOMAIN}:443 {
 CADDY
 fi
 
+if [ -n "$(dig A +short nextcloud-aio-jellyseerr)" ] && ! grep -q "requests.{\$NC_DOMAIN}" /Caddyfile; then
+    cat << CADDY >> /Caddyfile
+https://requests.{\$NC_DOMAIN}:443 {
+    # import GEOFILTER
+    reverse_proxy nextcloud-aio-jellyseerr:5055
+
+    # TLS options
+    tls {
+        issuer acme {
+            disable_http_challenge
+        }
+    }
+}
+CADDY
+fi
+
 mkdir -p /data/caddy-imports
 if ! grep -q "/data/caddy-imports" /Caddyfile; then
     echo 'import /data/caddy-imports/*' >> /Caddyfile
