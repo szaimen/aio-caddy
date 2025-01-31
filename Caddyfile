@@ -21,8 +21,12 @@
             allow_countries
         }
         not remote_ip private_ranges
+        # Exclude IP-address of scan.nexcloud.com so that scanning still works
+        not remote_ip 95.217.53.149
     }
-    respond @geofilter 403
+    respond @geofilter "Access denied" 403 {
+		close
+	}
 }
 
 https://{$NC_DOMAIN}:443 {
