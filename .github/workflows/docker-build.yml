@@ -27,8 +27,9 @@ jobs:
       - name: Login to DockerHub
         uses: docker/login-action@v3 
         with:
-          username: ${{ secrets.DOCKERHUB_USERNAME }}
-          password: ${{ secrets.DOCKERHUB_TOKEN }}
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Build container image
         uses: docker/build-push-action@v6
@@ -38,5 +39,5 @@ jobs:
           context: './'
           no-cache: true
           file: 'Dockerfile'
-          tags: szaimen/aio-caddy:${{ github.event.inputs.tagName }}
+          tags: ghcr.io/szaimen/aio-caddy:${{ github.event.inputs.tagName }}
           provenance: false
