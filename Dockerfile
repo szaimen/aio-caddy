@@ -1,4 +1,4 @@
-FROM caddy:2.9.1-builder-alpine AS builder
+FROM caddy:2.10.0-builder-alpine AS builder
 
 ENV CADDY_HASH=d82618e1407aacb3a3fbc1a8c0ee58e895337c1b
 
