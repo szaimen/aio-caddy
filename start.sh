@@ -89,7 +89,7 @@ https://autoconfig.{\$NC_DOMAIN}:443 {
     route {
         abort
     }
-    
+
     # TLS options
     tls {
         issuer acme {
@@ -104,7 +104,7 @@ https://autodiscover.{\$NC_DOMAIN}:443 {
     route {
         abort
     }
-    
+
     # TLS options
     tls {
         issuer acme {
@@ -147,7 +147,7 @@ https://tables.{\$NC_DOMAIN}:443 {
 CADDY
 fi
 
-if nc -z host.docker.internal 8096 && ! grep -q "host.docker.internal:8096" /Caddyfile; then
+if nc -z -w 30 host.docker.internal 8096 && ! grep -q "host.docker.internal:8096" /Caddyfile; then
     cat << CADDY >> /Caddyfile
 https://media.{\$NC_DOMAIN}:443 {
     # import GEOFILTER
