@@ -28,15 +28,3 @@
 		close
 	}
 }
-
-https://{$NC_DOMAIN}:443 {
-    # import GEOFILTER
-    reverse_proxy nextcloud-aio-apache:{$APACHE_PORT}
-
-    # TLS options
-    tls {
-        issuer acme {
-            disable_http_challenge
-        }
-    }
-}
