@@ -37,6 +37,36 @@ if [ -f "/nextcloud/admin/files/nextcloud-aio-caddy/block-vaultwarden-admin" ]; 
     VAULTWARDEN_BLOCK=1
 fi
 
+cat << CADDY > /Caddyfile
+https://{$NC_DOMAIN}:443 {
+    # import GEOFILTER
+CADDY
+
+if [ -n "$(dig A +short nextcloud-aio-onlyoffice)" ] && ! grep -q nextcloud-aio-onlyoffice /Caddyfile; then
+    cat << CADDY >> /Caddyfile
+    route /onlyoffice/* {
+        uri strip_prefix /onlyoffice
+        reverse_proxy {$ONLYOFFICE_HOST}:80 {
+            header_up X-Forwarded-Host {http.request.hostport}/onlyoffice
+            header_up X-Forwarded-Proto https
+        }
+    }
+CADDY
+fi
+
+
+cat << CADDY > /Caddyfile
+    reverse_proxy nextcloud-aio-apache:{$APACHE_PORT}
+
+    # TLS options
+    tls {
+        issuer acme {
+            disable_http_challenge
+        }
+    }
+}
+CADDY
+
 if [ -n "$(dig A +short nextcloud-aio-vaultwarden)" ] && ! grep -q nextcloud-aio-vaultwarden /Caddyfile; then
     cat << CADDY >> /Caddyfile
 https://bw.{\$NC_DOMAIN}:443 {
