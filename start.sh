@@ -181,10 +181,9 @@ fi
 
 if [ -n "$(dig A +short nextcloud-aio-talk)" ] && ! grep -q nextcloud-aio-talk /Caddyfile; then
     cat << CADDY >> /Caddyfile
-https://turn.{\$NC_DOMAIN}:443
 {
     layer4 {
-        127.0.0.1:3847 {
+        turn.{\$NC_DOMAIN}:443 {
             route {
                 upstream nextcloud-aio-talk:3478
             }
