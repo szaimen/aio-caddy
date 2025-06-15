@@ -19,13 +19,15 @@ jobs:
       run: |
         set -x
 
-        # caddy_hash
-        caddy_hash="$(
-          git ls-remote https://github.com/porech/caddy-maxmind-geolocation master \
-            | cut -f1 \
+        # CADDY_MAXMIND_VERSION
+        CADDY_MAXMIND_VERSION="$(
+          git ls-remote https://github.com/porech/caddy-maxmind-geolocation v* \
+            | cut -d/ -f3 \
+            | sort -V \
+            | grep -E "^v[0-9\.]+$" \
             | tail -1
         )"
-        sed -i "s|^ENV CADDY_HASH.*$|ENV CADDY_HASH=$caddy_hash|" ./Dockerfile
+        sed -i "s|^ENV CADDY_MAXMIND_VERSION.*$|ENV CADDY_MAXMIND_VERSION=$CADDY_MAXMIND_VERSION|" ./Dockerfile
 
         cat ./Dockerfile
 
