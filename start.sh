@@ -179,6 +179,21 @@ https://requests.{\$NC_DOMAIN}:443 {
 CADDY
 fi
 
+if [ -n "$(dig A +short nextcloud-aio-talk)" ] && ! grep -q nextcloud-aio-talk /Caddyfile; then
+    cat << CADDY > /tmp/turn.config
+    layer4 {
+        turn.{\$NC_DOMAIN}:443 {
+            route {
+                upstream nextcloud-aio-talk:443
+            }
+        }
+    }
+CADDY
+sed -i "/layer4-placeholder/r /tmp/turn.config" /Caddyfile
+fi
+
+
+
 mkdir -p /data/caddy-imports
 if ! grep -q "/data/caddy-imports" /Caddyfile; then
     echo 'import /data/caddy-imports/*' >> /Caddyfile
