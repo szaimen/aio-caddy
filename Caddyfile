@@ -12,6 +12,8 @@
     log {
         level ERROR
     }
+
+    # layer4-placeholder
 }
 
 (GEOFILTER) {
