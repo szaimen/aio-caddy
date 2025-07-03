@@ -6,7 +6,7 @@ on:
       tagName:
         description: "Tag name"
         required: true
-        default: 'v2'
+        default: 'v3'
 
 jobs:
   push_to_registry:
