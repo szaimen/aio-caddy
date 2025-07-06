@@ -179,6 +179,22 @@ https://requests.{\$NC_DOMAIN}:443 {
 CADDY
 fi
 
+if [ -n "$(dig A +short nextcloud-aio-local-ai-vulkan)" ] && ! grep -q nextcloud-aio-local-ai-vulkan /Caddyfile; then
+    cat << CADDY >> /Caddyfile
+https://ai.{\$NC_DOMAIN}:443 {
+    # import GEOFILTER
+    reverse_proxy nextcloud-aio-local-ai-vulkan:10078
+
+    # TLS options
+    tls {
+        issuer acme {
+            disable_http_challenge
+        }
+    }
+}
+CADDY
+fi
+
 mkdir -p /data/caddy-imports
 if ! grep -q "/data/caddy-imports" /Caddyfile; then
     echo 'import /data/caddy-imports/*' >> /Caddyfile
