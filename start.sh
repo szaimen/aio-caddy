@@ -12,6 +12,9 @@ done
 
 # apply configuration from admin
 if [ -f /nextcloud/admin/files/nextcloud-aio-caddy/Caddyfile ]; then 
+    echo "found Caddyfile in admin nextcloud folder which will be used: "
+    cat /nextcloud/admin/files/nextcloud-aio-caddy/Caddyfile
+    
     caddy fmt --overwrite /nextcloud/admin/files/nextcloud-aio-caddy/Caddyfile
     caddy run --config /nextcloud/admin/files/nextcloud-aio-caddy/Caddyfile
     exit
