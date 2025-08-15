@@ -7,7 +7,7 @@ RUN set -ex; \
         --with github.com/mholt/caddy-l4
 
 
-FROM alpine:3.21.3
+FROM alpine:3.22.1
 
 # hadolint ignore=DL3018
 RUN set -ex; \
@@ -29,3 +29,7 @@ COPY --chown=33:33 Caddyfile /Caddyfile
 
 USER www-data
 ENTRYPOINT [ "/start.sh" ]
+
+# Needed for Nextcloud AIO so that image cleanup can work. 
+# Unfortunately, this needs to be set in the Dockerfile in order to work.
+LABEL org.label-schema.vendor="Nextcloud"
