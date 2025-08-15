@@ -43,6 +43,18 @@ https://bw.{\$NC_DOMAIN}:443 {
     # import GEOFILTER
 CADDY
 
+    if [ -f /nextcloud/admin/files/nextcloud-aio-caddy/allowed-IPs-bitwarden.txt ]; then 
+        ALLOWED_IPS_BITWARDEN=$(cat /nextcloud/admin/files/nextcloud-aio-caddy/allowed-IPs-bitwarden.txt)
+        if [ -n "$ALLOWED_IPS_BITWARDEN" ]; then
+            cat << CADDY >> /Caddyfile
+        @public_networks not remote_ip $ALLOWED_IPS_BITWARDEN
+        respond @public_networks 403 {
+            close
+        }
+CADDY
+        fi
+    fi
+	
     if [ "$VAULTWARDEN_BLOCK" = 1 ]; then
         cat << CADDY >> /Caddyfile
     @blacklisted {
@@ -74,7 +86,21 @@ if [ -n "$(dig A +short nextcloud-aio-stalwart)" ] && ! grep -q "mail.{\$NC_DOMA
 https://mail.{\$NC_DOMAIN}:443 {
     # import GEOFILTER
     reverse_proxy nextcloud-aio-stalwart:10003
+CADDY
 
+	if [ -f /nextcloud/admin/files/nextcloud-aio-caddy/allowed-IPs-mail.txt ]; then 
+        ALLOWED_IPS_MAIL=$(cat /nextcloud/admin/files/nextcloud-aio-caddy/allowed-IPs-mail.txt)
+        if [ -n "$ALLOWED_IPS_MAIL" ]; then
+            cat << CADDY >> /Caddyfile
+        @public_networks not remote_ip $ALLOWED_IPS_MAIL
+        respond @public_networks 403 {
+            close
+        }
+CADDY
+        fi
+    fi
+	
+	cat << CADDY >> /Caddyfile
     # TLS options
     tls {
         issuer acme {
@@ -119,6 +145,21 @@ if [ -n "$(dig A +short nextcloud-aio-lldap)" ] && ! grep -q nextcloud-aio-lldap
     cat << CADDY >> /Caddyfile
 https://ldap.{\$NC_DOMAIN}:443 {
     # import GEOFILTER
+CADDY
+
+	if [ -f /nextcloud/admin/files/nextcloud-aio-caddy/allowed-IPs-lldap.txt ]; then 
+        ALLOWED_IPS_LLDAP=$(cat /nextcloud/admin/files/nextcloud-aio-caddy/allowed-IPs-lldap.txt)
+        if [ -n "$ALLOWED_IPS_LLDAP" ]; then
+            cat << CADDY >> /Caddyfile
+        @public_networks not remote_ip $ALLOWED_IPS_LLDAP
+        respond @public_networks 403 {
+            close
+        }
+CADDY
+        fi
+    fi
+
+ 	cat << CADDY >> /Caddyfile
     reverse_proxy nextcloud-aio-lldap:17170
 
     # TLS options
