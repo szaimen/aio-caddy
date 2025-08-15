@@ -10,13 +10,6 @@ while ! nc -z nextcloud-aio-nextcloud 9001; do
     sleep 5
 done
 
-# apply configuration from admin
-if [ -f /nextcloud/admin/files/nextcloud-aio-caddy/Caddyfile ]; then 
-    caddy fmt --overwrite /nextcloud/admin/files/nextcloud-aio-caddy/Caddyfile
-    caddy run --config /nextcloud/admin/files/nextcloud-aio-caddy/Caddyfile
-    exit
-fi
-
 set -x
 while ! [ -f /nextcloud/admin/files/nextcloud-aio-caddy/allowed-countries.txt ]; do
     echo "Waiting for allowed-countries.txt file to be created"
