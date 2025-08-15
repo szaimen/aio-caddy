@@ -30,12 +30,13 @@ if [ -f /nextcloud/admin/files/nextcloud-aio-caddy/Caddyfile ]; then
     # there is an error in current file, see if a previously working file exists
     echo "errors in custom Caddyfile, looking for previously working version"
     if [ -f /Caddyfile.working ]; then 
+        echo "previously working version is loaded"
         caddy fmt --overwrite /Caddyfile.working
         caddy run --config /Caddyfile.working
         exit
     fi
     
-    echo "previously working custom Caddyfile available, loading defaults"
+    echo "no previously working custom Caddyfile available, giving up and loading defaults"
 fi
 
 set -x
