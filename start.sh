@@ -12,20 +12,30 @@ done
 
 # apply configuration from admin
 if [ -f /nextcloud/admin/files/nextcloud-aio-caddy/Caddyfile ]; then 
-    echo "found Caddyfile in admin nextcloud folder which will be used: "
+    echo "found custom Caddyfile in admin's nextcloud folder:"
     cat /nextcloud/admin/files/nextcloud-aio-caddy/Caddyfile
     
-    echo "checking Caddyfile"
+    echo "checking for errors in custom Caddyfile"
     caddy validate --config /nextcloud/admin/files/nextcloud-aio-caddy/Caddyfile
 
-    # load file only if it is valid, else use default config
+    # load file only if it is valid, else use the previous version
     if [ $? -eq 0 ]; then 
+        # this seems to be working. Keep it as fall back for future errors
+        cp /nextcloud/admin/files/nextcloud-aio-caddy/Caddyfile /Caddyfile.working
         caddy fmt --overwrite /nextcloud/admin/files/nextcloud-aio-caddy/Caddyfile
         caddy run --config /nextcloud/admin/files/nextcloud-aio-caddy/Caddyfile
         exit
     fi
-    # there is an error
-    echo "errors in Caddyfile, loading defaults"
+    
+    # there is an error in current file, see if a previously working file exists
+    echo "errors in custom Caddyfile, looking for previously working version"
+    if [ -f /Caddyfile.working ]; then 
+        caddy fmt --overwrite /Caddyfile.working
+        caddy run --config /Caddyfile.working
+        exit
+    fi
+    
+    echo "previously working custom Caddyfile available, loading defaults"
 fi
 
 set -x
