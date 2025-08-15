@@ -15,9 +15,17 @@ if [ -f /nextcloud/admin/files/nextcloud-aio-caddy/Caddyfile ]; then
     echo "found Caddyfile in admin nextcloud folder which will be used: "
     cat /nextcloud/admin/files/nextcloud-aio-caddy/Caddyfile
     
-    caddy fmt --overwrite /nextcloud/admin/files/nextcloud-aio-caddy/Caddyfile
-    caddy run --config /nextcloud/admin/files/nextcloud-aio-caddy/Caddyfile
-    exit
+    echo "checking Caddyfile"
+    caddy validate --config /nextcloud/admin/files/nextcloud-aio-caddy/Caddyfile
+
+    # load file only if it is valid, else use default config
+    if [ $? -eq 0 ]; then 
+        caddy fmt --overwrite /nextcloud/admin/files/nextcloud-aio-caddy/Caddyfile
+        caddy run --config /nextcloud/admin/files/nextcloud-aio-caddy/Caddyfile
+        exit
+    fi
+    # there is an error
+    echo "errors in Caddyfile, loading defaults"
 fi
 
 set -x
