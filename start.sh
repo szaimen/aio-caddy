@@ -45,7 +45,7 @@ https://bw.{\$NC_DOMAIN}:443 {
 CADDY
 
 		if [ -f /nextcloud/admin/files/nextcloud-aio-caddy/allowedIps-bw ]; then 
-		allowedIPs=`cat /nextcloud/admin/files/nextcloud-aio-caddy/allowedIps-bw`
+		allowedIPs=$(cat /nextcloud/admin/files/nextcloud-aio-caddy/allowedIps-bw)
 		
 	    cat << CADDY >> /Caddyfile
 	@public_networks not remote_ip $allowedIPs
@@ -88,7 +88,7 @@ https://mail.{\$NC_DOMAIN}:443 {
 CADDY
 
 	if [ -f /nextcloud/admin/files/nextcloud-aio-caddy/allowedIps-mail ]; then 
-		allowedIPs=`cat /nextcloud/admin/files/nextcloud-aio-caddy/allowedIps-mail`
+		allowedIPs=$(cat /nextcloud/admin/files/nextcloud-aio-caddy/allowedIps-mail)
 		
 	    cat << CADDY >> /Caddyfile
 	@public_networks not remote_ip $allowedIPs
@@ -147,7 +147,7 @@ https://ldap.{\$NC_DOMAIN}:443 {
     # import GEOFILTER
 CADDY
 		if [ -f /nextcloud/admin/files/nextcloud-aio-caddy/allowedIps-ldap ]; then 
-		allowedIPs=`cat /nextcloud/admin/files/nextcloud-aio-caddy/allowedIps-ldap`
+		allowedIPs=$(cat /nextcloud/admin/files/nextcloud-aio-caddy/allowedIps-ldap)
 		
 	    cat << CADDY >> /Caddyfile
 	@public_networks not remote_ip $allowedIPs
@@ -176,7 +176,7 @@ https://tables.{\$NC_DOMAIN}:443 {
     # import GEOFILTER
 CADDY
 		if [ -f /nextcloud/admin/files/nextcloud-aio-caddy/allowedIps-tables ]; then 
-		allowedIPs=`cat /nextcloud/admin/files/nextcloud-aio-caddy/allowedIps-tables`
+		allowedIPs=$(cat /nextcloud/admin/files/nextcloud-aio-caddy/allowedIps-tables)
 		
 	    cat << CADDY >> /Caddyfile
 	@public_networks not remote_ip $allowedIPs
@@ -206,7 +206,7 @@ https://media.{\$NC_DOMAIN}:443 {
 	
 CADDY
 		if [ -f /nextcloud/admin/files/nextcloud-aio-caddy/allowedIps-media ]; then 
-		allowedIPs=`cat /nextcloud/admin/files/nextcloud-aio-caddy/allowedIps-media`
+		allowedIPs=$(cat /nextcloud/admin/files/nextcloud-aio-caddy/allowedIps-media)
 		
 	    cat << CADDY >> /Caddyfile
 	@public_networks not remote_ip $allowedIPs
@@ -236,7 +236,7 @@ https://requests.{\$NC_DOMAIN}:443 {
     # import GEOFILTER
 CADDY
 		if [ -f /nextcloud/admin/files/nextcloud-aio-caddy/allowedIps-requests ]; then 
-		allowedIPs=`cat /nextcloud/admin/files/nextcloud-aio-caddy/allowedIps-requests`
+		allowedIPs=$(cat /nextcloud/admin/files/nextcloud-aio-caddy/allowedIps-requests)
 		
 	    cat << CADDY >> /Caddyfile
 	@public_networks not remote_ip $allowedIPs
