@@ -179,6 +179,45 @@ https://requests.{\$NC_DOMAIN}:443 {
 CADDY
 fi
 
+if [ -n "$(dig A +short nextcloud-aio-nextcloud-exporter)" ] && ! grep -q "nextcloud-aio-nextcloud-exporter" /Caddyfile; then
+    echo "INFO: nextcloud-aio-nextcloud-exporter detected, configuring metrics endpoint..."
+
+    # Use hardcoded username and environment variable for password
+    METRICS_USERNAME="metrics"
+
+    if [ -n "$NEXTCLOUD_EXPORTER_CADDY_PASSWORD" ]; then
+        echo "INFO: Generating password hash for metrics authentication..."
+        METRICS_PASSWORD_HASH=$(caddy hash-password --plaintext "$NEXTCLOUD_EXPORTER_CADDY_PASSWORD")
+
+        cat << CADDY >> /Caddyfile
+https://metrics.{\$NC_DOMAIN}:443 {
+    # import GEOFILTER
+
+    # Basic authentication for metrics endpoint
+    basicauth {
+        $METRICS_USERNAME $METRICS_PASSWORD_HASH
+    }
+
+    # Rewrite root path to /metrics for the upstream
+    rewrite / /metrics
+
+    reverse_proxy nextcloud-aio-nextcloud-exporter:9205
+
+    # TLS options
+    tls {
+        issuer acme {
+            disable_http_challenge
+        }
+    }
+}
+CADDY
+        echo "INFO: Metrics endpoint configuration completed successfully"
+    else
+        echo "WARNING: NEXTCLOUD_EXPORTER_CADDY_PASSWORD environment variable not set"
+        echo "WARNING: Skipping metrics endpoint configuration - authentication required"
+    fi
+fi
+
 mkdir -p /data/caddy-imports
 if ! grep -q "/data/caddy-imports" /Caddyfile; then
     echo 'import /data/caddy-imports/*' >> /Caddyfile
