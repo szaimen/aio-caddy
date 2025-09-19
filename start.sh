@@ -10,7 +10,6 @@ while ! nc -z nextcloud-aio-nextcloud 9001; do
     sleep 5
 done
 
-
 set -x
 while ! [ -f /nextcloud/admin/files/nextcloud-aio-caddy/allowed-countries.txt ]; do
     echo "Waiting for allowed-countries.txt file to be created"
@@ -42,19 +41,20 @@ if [ -n "$(dig A +short nextcloud-aio-vaultwarden)" ] && ! grep -q nextcloud-aio
     cat << CADDY >> /Caddyfile
 https://bw.{\$NC_DOMAIN}:443 {
     # import GEOFILTER
-CADDY
 
-		if [ -f /nextcloud/admin/files/nextcloud-aio-caddy/allowedIps-bw ]; then 
-		allowedIPs=$(cat /nextcloud/admin/files/nextcloud-aio-caddy/allowedIps-bw)
-		
-	    cat << CADDY >> /Caddyfile
-	@public_networks not remote_ip $allowedIPs
+CADDY
+    if [ -f /nextcloud/admin/files/nextcloud-aio-caddy/allowed-IPs-bitwarden.txt ]; then 
+        ALLOWED_IPS_BITWARDEN=$(cat /nextcloud/admin/files/nextcloud-aio-caddy/allowed-IPs-bitwarden.txt)
+        if [ -n "$ALLOWED_IPS_BITWARDEN" ]; then
+            cat << CADDY >> /Caddyfile
+        @public_networks not remote_ip $ALLOWED_IPS_BITWARDEN
         respond @public_networks 403 {
-			close
-		}
+            close
+        }
 CADDY
-	fi
-
+        fi
+    fi
+	
     if [ "$VAULTWARDEN_BLOCK" = 1 ]; then
         cat << CADDY >> /Caddyfile
     @blacklisted {
@@ -87,20 +87,20 @@ https://mail.{\$NC_DOMAIN}:443 {
     # import GEOFILTER
 CADDY
 
-	if [ -f /nextcloud/admin/files/nextcloud-aio-caddy/allowedIps-mail ]; then 
-		allowedIPs=$(cat /nextcloud/admin/files/nextcloud-aio-caddy/allowedIps-mail)
-		
-	    cat << CADDY >> /Caddyfile
-	@public_networks not remote_ip $allowedIPs
+	if [ -f /nextcloud/admin/files/nextcloud-aio-caddy/allowed-IPs-mail.txt ]; then 
+        ALLOWED_IPS_MAIL=$(cat /nextcloud/admin/files/nextcloud-aio-caddy/allowed-IPs-mail.txt)
+        if [ -n "$ALLOWED_IPS_MAIL" ]; then
+            cat << CADDY >> /Caddyfile
+        @public_networks not remote_ip $ALLOWED_IPS_MAIL
         respond @public_networks 403 {
-			close
-		}
+            close
+        }
 CADDY
-	fi
+        fi
+    fi
 	
 	cat << CADDY >> /Caddyfile
     reverse_proxy nextcloud-aio-stalwart:10003
-
     # TLS options
     tls {
         issuer acme {
@@ -146,18 +146,20 @@ if [ -n "$(dig A +short nextcloud-aio-lldap)" ] && ! grep -q nextcloud-aio-lldap
 https://ldap.{\$NC_DOMAIN}:443 {
     # import GEOFILTER
 CADDY
-		if [ -f /nextcloud/admin/files/nextcloud-aio-caddy/allowedIps-ldap ]; then 
-		allowedIPs=$(cat /nextcloud/admin/files/nextcloud-aio-caddy/allowedIps-ldap)
-		
-	    cat << CADDY >> /Caddyfile
-	@public_networks not remote_ip $allowedIPs
-        respond @public_networks 403 {
-			close
-		}
-CADDY
-	fi
 
-	cat << CADDY >> /Caddyfile
+	if [ -f /nextcloud/admin/files/nextcloud-aio-caddy/allowed-IPs-lldap.txt ]; then 
+        ALLOWED_IPS_LLDAP=$(cat /nextcloud/admin/files/nextcloud-aio-caddy/allowed-IPs-lldap.txt)
+        if [ -n "$ALLOWED_IPS_LLDAP" ]; then
+            cat << CADDY >> /Caddyfile
+        @public_networks not remote_ip $ALLOWED_IPS_LLDAP
+        respond @public_networks 403 {
+            close
+        }
+CADDY
+        fi
+    fi
+
+ 	cat << CADDY >> /Caddyfile
     reverse_proxy nextcloud-aio-lldap:17170
 
     # TLS options
@@ -174,19 +176,6 @@ if [ -n "$(dig A +short nextcloud-aio-nocodb)" ] && ! grep -q nextcloud-aio-noco
     cat << CADDY >> /Caddyfile
 https://tables.{\$NC_DOMAIN}:443 {
     # import GEOFILTER
-CADDY
-		if [ -f /nextcloud/admin/files/nextcloud-aio-caddy/allowedIps-tables ]; then 
-		allowedIPs=$(cat /nextcloud/admin/files/nextcloud-aio-caddy/allowedIps-tables)
-		
-	    cat << CADDY >> /Caddyfile
-	@public_networks not remote_ip $allowedIPs
-        respond @public_networks 403 {
-			close
-		}
-CADDY
-	fi
-
-	cat << CADDY >> /Caddyfile
     reverse_proxy nextcloud-aio-nocodb:10028
 
     # TLS options
@@ -203,21 +192,6 @@ if nc -z -w 30 host.docker.internal 8096 && ! grep -q "host.docker.internal:8096
     cat << CADDY >> /Caddyfile
 https://media.{\$NC_DOMAIN}:443 {
     # import GEOFILTER
-	
-CADDY
-		if [ -f /nextcloud/admin/files/nextcloud-aio-caddy/allowedIps-media ]; then 
-		allowedIPs=$(cat /nextcloud/admin/files/nextcloud-aio-caddy/allowedIps-media)
-		
-	    cat << CADDY >> /Caddyfile
-	@public_networks not remote_ip $allowedIPs
-        respond @public_networks 403 {
-			close
-		}
-CADDY
-	fi
-
-	cat << CADDY >> /Caddyfile
-	
     reverse_proxy host.docker.internal:8096
 
     # TLS options
@@ -234,20 +208,6 @@ if [ -n "$(dig A +short nextcloud-aio-jellyseerr)" ] && ! grep -q nextcloud-aio-
     cat << CADDY >> /Caddyfile
 https://requests.{\$NC_DOMAIN}:443 {
     # import GEOFILTER
-CADDY
-		if [ -f /nextcloud/admin/files/nextcloud-aio-caddy/allowedIps-requests ]; then 
-		allowedIPs=$(cat /nextcloud/admin/files/nextcloud-aio-caddy/allowedIps-requests)
-		
-	    cat << CADDY >> /Caddyfile
-	@public_networks not remote_ip $allowedIPs
-        respond @public_networks 403 {
-			close
-		}
-CADDY
-	fi
-
-	cat << CADDY >> /Caddyfile	
-
     reverse_proxy nextcloud-aio-jellyseerr:5055
 
     # TLS options
