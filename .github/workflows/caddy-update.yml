@@ -29,6 +29,14 @@ jobs:
         )"
         sed -i "s|^ENV CADDY_MAXMIND_VERSION.*$|ENV CADDY_MAXMIND_VERSION=$CADDY_MAXMIND_VERSION|" ./Dockerfile
 
+        # CADDY_L4_HASH
+        CADDY_L4_HASH="$(
+          git ls-remote https://github.com/mholt/caddy-l4 master \
+            | cut -f1 \
+            | tail -1
+        )"
+        sed -i "s|^ENV CADDY_L4_HASH.*$|ENV CADDY_L4_HASH=$CADDY_L4_HASH|" ./Dockerfile
+
         cat ./Dockerfile
 
     - name: Create Pull Request
