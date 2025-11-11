@@ -43,11 +43,11 @@ https://bw.{\$NC_DOMAIN}:443 {
     # import GEOFILTER
 CADDY
 
-    if [ -f /nextcloud/admin/files/nextcloud-aio-caddy/allowed-IPs-bitwarden.txt ]; then 
-        ALLOWED_IPS_BITWARDEN=$(cat /nextcloud/admin/files/nextcloud-aio-caddy/allowed-IPs-bitwarden.txt)
-        if [ -n "$ALLOWED_IPS_BITWARDEN" ]; then
+    if [ -f /nextcloud/admin/files/nextcloud-aio-caddy/allowed-IPs-vaultwarden.txt ]; then 
+        ALLOWED_IPS_VAULTWARDEN=$(cat /nextcloud/admin/files/nextcloud-aio-caddy/allowed-IPs-vaultwarden.txt)
+        if [ -n "$ALLOWED_IPS_VAULTWARDEN" ]; then
             cat << CADDY >> /Caddyfile
-        @public_networks not remote_ip $ALLOWED_IPS_BITWARDEN
+        @public_networks not remote_ip $ALLOWED_IPS_VAULTWARDEN
         respond @public_networks 403 {
             close
         }
@@ -88,11 +88,11 @@ https://mail.{\$NC_DOMAIN}:443 {
     reverse_proxy nextcloud-aio-stalwart:10003
 CADDY
 
-	if [ -f /nextcloud/admin/files/nextcloud-aio-caddy/allowed-IPs-mail.txt ]; then 
-        ALLOWED_IPS_MAIL=$(cat /nextcloud/admin/files/nextcloud-aio-caddy/allowed-IPs-mail.txt)
-        if [ -n "$ALLOWED_IPS_MAIL" ]; then
+	if [ -f /nextcloud/admin/files/nextcloud-aio-caddy/allowed-IPs-stalwart.txt ]; then 
+        ALLOWED_IPS_STALWART=$(cat /nextcloud/admin/files/nextcloud-aio-caddy/allowed-IPs-stalwart.txt)
+        if [ -n "$ALLOWED_IPS_STALWART" ]; then
             cat << CADDY >> /Caddyfile
-        @public_networks not remote_ip $ALLOWED_IPS_MAIL
+        @public_networks not remote_ip $ALLOWED_IPS_STALWART
         respond @public_networks 403 {
             close
         }
