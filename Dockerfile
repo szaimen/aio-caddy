@@ -3,9 +3,12 @@ FROM caddy:2.10.2-builder-alpine AS builder
 ENV CADDY_MAXMIND_VERSION=v1.0.1
 ENV CADDY_L4_HASH=1823cde2603c124d48b7843729747f66e941fa2f
 
+WORKDIR /usr/bin
+
 RUN set -ex; \
     xcaddy build --with github.com/porech/caddy-maxmind-geolocation@"$CADDY_MAXMIND_VERSION" \
-        --with github.com/mholt/caddy-l4@"$CADDY_L4_HASH"
+        --with github.com/mholt/caddy-l4@"$CADDY_L4_HASH"; \
+    /usr/bin/caddy list-modules
 
 FROM alpine:3.22.2
 
