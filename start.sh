@@ -264,7 +264,9 @@ if [ -n "$(dig A +short nextcloud-aio-talk)" ] && ! grep -q nextcloud-aio-talk /
     layer4 {
         turn.{\$NC_DOMAIN}:443 {
             route {
-                upstream nextcloud-aio-talk:443
+                proxy {
+                    upstream nextcloud-aio-talk:443
+                }
             }
         }
     }
