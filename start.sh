@@ -269,7 +269,8 @@ if [ -n "$(dig A +short nextcloud-aio-talk)" ] && ! grep -q nextcloud-aio-talk /
         }
     }
 CADDY
-sed -i "/layer4-placeholder/r /tmp/turn.config" /Caddyfile
+    CADDYFILE="$(sed "/layer4-placeholder/r /tmp/turn.config" /Caddyfile)"
+    echo "$CADDYFILE" > /Caddyfile
 fi
 
 mkdir -p /data/caddy-imports
