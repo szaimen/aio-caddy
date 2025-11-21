@@ -7,13 +7,12 @@
 
     servers {
         trusted_proxies placeholder
+        # layer4-placeholder
     }
 
     log {
         level ERROR
     }
-
-    # layer4-placeholder
 }
 
 (GEOFILTER) {
