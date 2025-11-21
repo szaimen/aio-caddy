@@ -262,11 +262,21 @@ fi
 if [ -n "$(dig A +short nextcloud-aio-talk)" ] && ! grep -q nextcloud-aio-talk /Caddyfile; then
     cat << CADDY > /tmp/turn.config
     layer4 {
-        turn.{\$NC_DOMAIN}:443 {
+        :443 {
+            @tls tls
+            route @tls {
+                proxy 127.0.0.1:443
+            }
+            @quic quic
+            route @quic {
+                proxy 127.0.0.1:443
+            }
+            @http http
+            route @http {
+                proxy 127.0.0.1:443
+            }
             route {
-                proxy {
-                    upstream nextcloud-aio-talk:443
-                }
+                proxy nextcloud-aio-talk:443
             }
         }
     }
