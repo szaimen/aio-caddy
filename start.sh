@@ -261,24 +261,15 @@ fi
 
 if [ -n "$(dig A +short nextcloud-aio-talk)" ] && ! grep -q nextcloud-aio-talk /Caddyfile; then
     cat << CADDY > /tmp/turn.config
-    layer4 {
-        :443 {
-            @tls tls
-            route @tls {
-                proxy 127.0.0.1:443
-            }
-            @quic quic
-            route @quic {
-                proxy 127.0.0.1:443
-            }
-            @http http
-            route @http {
-                proxy 127.0.0.1:443
-            }
-            route {
-                proxy nextcloud-aio-talk:443
-            }
-        }
+    listener_wrappers {
+          layer4 {
+                     @turn not tls
+                     route @turn {
+                                     proxy nextcloud-aio-talk:443
+                                 }
+                     route
+                 }
+          tls
     }
 CADDY
     CADDYFILE="$(sed "/layer4-placeholder/r /tmp/turn.config" /Caddyfile)"
