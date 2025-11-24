@@ -265,10 +265,7 @@ if [ -n "$(dig A +short nextcloud-aio-talk)" ] && ! grep -q nextcloud-aio-talk /
           layer4 {
                      @turn not tls
                      route @turn {
-                                     proxy {
-                                            proxy_protocol v1
-                                            upstream nextcloud-aio-talk:443
-                                      }
+                                     proxy nextcloud-aio-talk:443
                                  }
                      route
                  }
