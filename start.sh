@@ -261,18 +261,27 @@ fi
 
 if [ -n "$(dig A +short nextcloud-aio-talk)" ] && ! grep -q nextcloud-aio-talk /Caddyfile; then
     cat << CADDY > /tmp/turn.config
-    listener_wrappers {
-          layer4 {
-                     @turn not tls
-                     route @turn {
-                                     proxy nextcloud-aio-talk:443
-                                 }
-                     route
-                 }
-          tls
-    }
+            layer4 {
+                @turn not tls
+                route @turn {
+                        proxy nextcloud-aio-talk:443
+                    }
+                route
+            }
 CADDY
     CADDYFILE="$(sed "/layer4-placeholder/r /tmp/turn.config" /Caddyfile)"
+    echo "$CADDYFILE" > /Caddyfile
+fi
+
+if [ -n "$APACHE_IP_BINDING" ] && [ "$APACHE_IP_BINDING" != "@INTERNAL" ] && ! grep -q proxy_protocol /Caddyfile; then
+    cat << CADDY > /tmp/proxy.config
+            proxy_protocol {
+                timeout 5s
+                allow $APACHE_IP_BINDING
+                fallback_policy skip
+            }
+CADDY
+    CADDYFILE="$(sed "/proxy-protocol-placeholder/r /tmp/proxy.config" /Caddyfile)"
     echo "$CADDYFILE" > /Caddyfile
 fi
 
