@@ -271,6 +271,11 @@ if [ -n "$(dig A +short nextcloud-aio-talk)" ] && ! grep -q nextcloud-aio-talk /
 CADDY
     CADDYFILE="$(sed "/layer4-placeholder/r /tmp/turn.config" /Caddyfile)"
     echo "$CADDYFILE" > /Caddyfile
+
+    if grep -q "tls-placeholder" /Caddyfile; then
+        CADDYFILE="$(sed "s/# tls-placeholder/tls/" /Caddyfile)"
+        echo "$CADDYFILE" > /Caddyfile
+    fi
 fi
 
 if [ -n "$APACHE_IP_BINDING" ] && [ "$APACHE_IP_BINDING" != "@INTERNAL" ] && ! grep -q proxy_protocol /Caddyfile; then
@@ -283,6 +288,11 @@ if [ -n "$APACHE_IP_BINDING" ] && [ "$APACHE_IP_BINDING" != "@INTERNAL" ] && ! g
 CADDY
     CADDYFILE="$(sed "/proxy-protocol-placeholder/r /tmp/proxy.config" /Caddyfile)"
     echo "$CADDYFILE" > /Caddyfile
+
+    if grep -q "tls-placeholder" /Caddyfile; then
+        CADDYFILE="$(sed "s/# tls-placeholder/tls/" /Caddyfile)"
+        echo "$CADDYFILE" > /Caddyfile
+    fi
 fi
 
 mkdir -p /data/caddy-imports

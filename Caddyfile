@@ -11,7 +11,7 @@
         listener_wrappers {
             # proxy-protocol-placeholder
             # layer4-placeholder
-            tls
+            # tls-placeholder
         }
     }
 
