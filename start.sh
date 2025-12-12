@@ -278,7 +278,7 @@ CADDY
     fi
 fi
 
-if [ -n "$APACHE_IP_BINDING" ] && [ "$APACHE_IP_BINDING" != "@INTERNAL" ] && [ "$APACHE_IP_BINDING" != "0.0.0.0" ] && ! grep -q proxy_protocol /Caddyfile; then
+if [ -n "$APACHE_IP_BINDING" ] && [ "$APACHE_IP_BINDING" != "@INTERNAL" ] && [ "$APACHE_IP_BINDING" != "0.0.0.0" ] && [ "$APACHE_IP_BINDING" != "127.0.0.1" ] && ! grep -q proxy_protocol /Caddyfile; then
     cat << CADDY > /tmp/proxy.config
             proxy_protocol {
                 timeout 5s
