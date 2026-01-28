@@ -10,7 +10,7 @@ RUN set -ex; \
         --with github.com/mholt/caddy-l4@"$CADDY_L4_HASH"; \
     /usr/bin/caddy list-modules
 
-FROM alpine:3.23.2
+FROM alpine:3.23.3
 
 # hadolint ignore=DL3018
 RUN set -ex; \
