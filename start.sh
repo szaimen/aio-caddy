@@ -220,6 +220,22 @@ https://requests.{\$NC_DOMAIN}:443 {
 CADDY
 fi
 
+if [ -n "$(dig A +short nextcloud-aio-local-ai)" ] && ! grep -q nextcloud-aio-local-ai /Caddyfile; then
+    cat << CADDY >> /Caddyfile
+https://ai.{\$NC_DOMAIN}:443 {
+    # import GEOFILTER
+    reverse_proxy nextcloud-aio-local-ai:10078
+
+    # TLS options
+    tls {
+        issuer acme {
+            disable_http_challenge
+        }
+    }
+}
+CADDY
+fi
+
 if [ -n "$(dig A +short nextcloud-aio-nextcloud-exporter)" ] && ! grep -q "nextcloud-aio-nextcloud-exporter" /Caddyfile; then
     echo "INFO: nextcloud-aio-nextcloud-exporter detected, configuring metrics endpoint..."
 
