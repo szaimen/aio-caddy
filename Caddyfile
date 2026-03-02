@@ -7,42 +7,15 @@
 
     servers {
         protocols h1 h2 h2c
-        trusted_proxies placeholder
-        listener_wrappers {
-            # proxy-protocol-placeholder
-            # layer4-placeholder
-            # tls-placeholder
-        }
+        trusted_proxies static private_ranges
     }
 
-    log {
-        level ERROR
-    }
+    debug
 }
 
-(GEOFILTER) {
-    @geofilter {
-        not maxmind_geolocation {
-            db_path "/data/GeoLite2-Country.mmdb"
-            allow_countries
-        }
-        not remote_ip private_ranges
-        # Exclude IP-address of scan.nexcloud.com so that scanning still works
-        not remote_ip 95.217.53.149
-    }
-    respond @geofilter "Access denied" 403 {
-		close
-	}
-}
+http://127.0.0.1:8080 {
+	@denied remote_host nextcloud-aio-nextcloud
+	abort @denied
 
-https://{$NC_DOMAIN}:443 {
-    # import GEOFILTER
-    reverse_proxy nextcloud-aio-apache:{$APACHE_PORT}
-
-    # TLS options
-    tls {
-        issuer acme {
-            disable_http_challenge
-        }
-    }
+	respond "Hello, you must be from a private network!"
 }

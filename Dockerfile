@@ -3,12 +3,15 @@ FROM caddy:2.11.1-builder-alpine AS builder
 ENV CADDY_MAXMIND_VERSION=v1.0.1
 ENV CADDY_L4_HASH=66170bec9f4d6a015e31b04545afa1f90a873b3f
 
+COPY --chown=33:33 Caddyfile /Caddyfile
+
 WORKDIR /usr/bin
 
 RUN set -ex; \
-    xcaddy build --with github.com/porech/caddy-maxmind-geolocation@"$CADDY_MAXMIND_VERSION" \
-        --with github.com/mholt/caddy-l4@"$CADDY_L4_HASH"; \
-    /usr/bin/caddy list-modules
+    xcaddy build --with github.com/muety/caddy-remote-host; \
+    /usr/bin/caddy list-modules; \
+    exec caddy run --config /Caddyfile; \
+    curl http://127.0.0.1:8080
 
 FROM alpine:3.23.3
 
@@ -28,7 +31,6 @@ VOLUME /data
 
 COPY --from=builder /usr/bin/caddy /usr/local/bin/caddy
 COPY --chmod=775 start.sh /start.sh
-COPY --chown=33:33 Caddyfile /Caddyfile
 
 USER www-data
 ENTRYPOINT [ "/start.sh" ]
