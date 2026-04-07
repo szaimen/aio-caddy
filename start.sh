@@ -11,6 +11,14 @@ while ! nc -z nextcloud-aio-nextcloud 9001; do
 done
 
 set -x
+
+# Add check for default admin user
+if ! [ -d "/nextcloud/admin" ]; then
+    echo "The default Nextcloud admin user doees not seem to exist anymore."
+    echo "This is not supported by this container!"
+    exit 1
+fi
+
 while ! [ -f /nextcloud/admin/files/nextcloud-aio-caddy/allowed-countries.txt ]; do
     echo "Waiting for allowed-countries.txt file to be created"
     sleep 5
