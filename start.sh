@@ -311,9 +311,9 @@ CADDY
     fi
 fi
 
-#import custom caddy configs that can be changed by the admin
-#this is the legacy import to preserve compatibility with older installations
-#this needs to be maintained on in the caddy container
+# Import custom caddy configs that can be changed by the admin.
+# This is the legacy import to preserve compatibility with older installations.
+# This needs to be maintained on in the caddy container.
 mkdir -p /data/caddy-imports
 if ! grep -q "/data/caddy-imports" /Caddyfile; then
     echo 'import /data/caddy-imports/*' >> /Caddyfile
