@@ -324,8 +324,6 @@ fi
 #this is the more convenient way of maintaining the custom config in the files app of the admin
 if ! grep -q "/nextcloud/admin/files/nextcloud-aio-caddy/caddy-imports" /Caddyfile; then
     echo 'import /nextcloud/admin/files/nextcloud-aio-caddy/caddy-imports/*' >> /Caddyfile
-    # Make sure that the caddy-imports dir is not empty
-    echo "# empty file so that caddy does not print a warning" > /nextcloud/admin/files/nextcloud-aio-caddy/caddy-imports
 fi
 
 if [ "$FILTER_SET" = 1 ] && [ "$FILE_THERE" = 1 ]; then
