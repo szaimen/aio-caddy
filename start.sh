@@ -322,7 +322,6 @@ if ! grep -q "/data/caddy-imports" /Caddyfile; then
 fi
 
 #this is the more convenient way of maintaining the custom config in the files app of the admin
-mkdir -p /nextcloud/admin/files/nextcloud-aio-caddy/caddy-imports
 if ! grep -q "/nextcloud/admin/files/nextcloud-aio-caddy/caddy-imports" /Caddyfile; then
     echo 'import /nextcloud/admin/files/nextcloud-aio-caddy/caddy-imports/*' >> /Caddyfile
     # Make sure that the caddy-imports dir is not empty
