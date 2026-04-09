@@ -319,11 +319,19 @@ CADDY
     fi
 fi
 
+# Import custom caddy configs that can be changed by the admin.
+# This is the legacy import to preserve compatibility with older installations.
+# This needs to be maintained in the caddy container.
 mkdir -p /data/caddy-imports
 if ! grep -q "/data/caddy-imports" /Caddyfile; then
     echo 'import /data/caddy-imports/*' >> /Caddyfile
     # Make sure that the caddy-imports dir is not empty
     echo "# empty file so that caddy does not print a warning" > /data/caddy-imports/empty
+fi
+
+# This is the more convenient way of maintaining the custom config in the files app of the admin
+if [ -d "/nextcloud/admin/files/nextcloud-aio-caddy/caddy-imports" ] && ! grep -q "/nextcloud/admin/files/nextcloud-aio-caddy/caddy-imports" /Caddyfile; then
+    echo 'import /nextcloud/admin/files/nextcloud-aio-caddy/caddy-imports/*' >> /Caddyfile
 fi
 
 if [ "$FILTER_SET" = 1 ] && [ "$FILE_THERE" = 1 ]; then
