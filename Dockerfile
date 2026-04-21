@@ -1,7 +1,7 @@
 FROM caddy:2.11.2-builder-alpine AS builder
 
 ENV CADDY_MAXMIND_VERSION=v1.0.3
-ENV CADDY_L4_HASH=afd229714fb14a387f0736cab048afeb72b8946a
+ENV CADDY_L4_HASH=6faae83b167fda94e62b686be5cbeb9b3f8fe002
 
 WORKDIR /usr/bin
 
