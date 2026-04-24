@@ -340,6 +340,16 @@ else
     CADDYFILE="$(sed "s|  import GEOFILTER|# import GEOFILTER|" /Caddyfile)"
 fi
 echo "$CADDYFILE" > /Caddyfile
+
+if [ -n "$DESEC_TOKEN" ]; then
+    if awk '/disable_http_challenge/ { print "            dns desec {"; print "                token {env.DESEC_TOKEN}"; print "            }"; next } { print }' /Caddyfile > /tmp/Caddyfile.dns; then
+        mv /tmp/Caddyfile.dns /Caddyfile
+    else
+        echo "ERROR: Failed to apply deSEC DNS challenge configuration"
+        exit 1
+    fi
+fi
+
 set +x
 
 caddy fmt --overwrite /Caddyfile
