@@ -37,6 +37,14 @@ jobs:
         )"
         sed -i "s|^ENV CADDY_L4_HASH.*$|ENV CADDY_L4_HASH=$CADDY_L4_HASH|" ./Dockerfile
 
+        # CADDY_DESEC_DNS_HASH
+        CADDY_DESEC_DNS_HASH="$(
+          git ls-remote https://github.com/soju841/caddy-dns-desec main \
+            | cut -f1 \
+            | tail -1
+        )"
+        sed -i "s|^ENV CADDY_DESEC_DNS_HASH.*$|ENV CADDY_DESEC_DNS_HASH=$CADDY_DESEC_DNS_HASH|" ./Dockerfile
+
         cat ./Dockerfile
 
     - name: Create Pull Request
