@@ -244,6 +244,22 @@ https://ai.{\$NC_DOMAIN}:443 {
 CADDY
 fi
 
+if [ -n "$(dig A +short nextcloud-aio-joplin-server)" ] && ! grep -q nextcloud-aio-joplin-server /Caddyfile; then
+    cat << CADDY >> /Caddyfile
+https://joplin.{\$NC_DOMAIN}:443 {
+    # import GEOFILTER
+    reverse_proxy nextcloud-aio-joplin-server:22300
+
+    # TLS options
+    tls {
+        issuer acme {
+            disable_http_challenge
+        }
+    }
+}
+CADDY
+fi
+
 if [ -n "$(dig A +short nextcloud-aio-nextcloud-exporter)" ] && ! grep -q "nextcloud-aio-nextcloud-exporter" /Caddyfile; then
     echo "INFO: nextcloud-aio-nextcloud-exporter detected, configuring metrics endpoint..."
 
