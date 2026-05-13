@@ -1,4 +1,4 @@
-FROM caddy:2.11.2-builder-alpine AS builder
+FROM caddy:2.11.3-builder-alpine AS builder
 
 ENV CADDY_MAXMIND_VERSION=v1.0.3
 ENV CADDY_L4_HASH=afd229714fb14a387f0736cab048afeb72b8946a
