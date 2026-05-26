@@ -323,7 +323,7 @@ if [ -n "$(dig A +short nextcloud-aio-azuracast)" ] && ! grep -q nextcloud-aio-a
     cat << CADDY >> /Caddyfile
 https://radio.{\$NC_DOMAIN}:443 {
     # import GEOFILTER
-    reverse_proxy nextcloud-aio-azuracast:8080 {
+    reverse_proxy nextcloud-aio-azuracast:10080 {
         flush_interval -1
     }
 
