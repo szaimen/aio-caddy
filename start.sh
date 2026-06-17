@@ -335,6 +335,24 @@ CADDY
     fi
 fi
 
+if [ -n "$(dig A +short nextcloud-aio-azuracast)" ] && ! grep -q nextcloud-aio-azuracast /Caddyfile; then
+    cat << CADDY >> /Caddyfile
+https://radio.{\$NC_DOMAIN}:443 {
+    # import GEOFILTER
+    reverse_proxy nextcloud-aio-azuracast:10080 {
+        flush_interval -1
+    }
+
+    # TLS options
+    tls {
+        issuer acme {
+            disable_http_challenge
+        }
+    }
+}
+CADDY
+fi
+
 # Import custom caddy configs that can be changed by the admin.
 # This is the legacy import to preserve compatibility with older installations.
 # This needs to be maintained in the caddy container.
