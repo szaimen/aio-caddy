@@ -375,7 +375,12 @@ else
 fi
 echo "$CADDYFILE" > /Caddyfile
 
-if [ -n "$DESEC_TOKEN" ] && ! grep -q "dns desec" /Caddyfile; then
+# Convert every remaining http challenge to the deSEC DNS-01 challenge.
+# This must run on each start (not gated on whether "dns desec" already exists
+# in the file) because subdomain blocks like bw.$NC_DOMAIN are appended lazily
+# as their backend service appears. Otherwise a block added after the first run
+# would keep disable_http_challenge and never get a certificate.
+if [ -n "$DESEC_TOKEN" ] && grep -q "disable_http_challenge" /Caddyfile; then
     if CADDYFILE_DNS="$(awk '/disable_http_challenge/ { print "            dns desec {"; print "                token {env.DESEC_TOKEN}"; print "            }"; next } { print }' /Caddyfile)"; then
         echo "$CADDYFILE_DNS" > /Caddyfile
     else
