@@ -376,8 +376,8 @@ fi
 echo "$CADDYFILE" > /Caddyfile
 
 if [ -n "$DESEC_TOKEN" ] && ! grep -q "dns desec" /Caddyfile; then
-    if awk '/disable_http_challenge/ { print "            dns desec {"; print "                token {env.DESEC_TOKEN}"; print "            }"; next } { print }' /Caddyfile > /tmp/Caddyfile.dns; then
-        mv /tmp/Caddyfile.dns /Caddyfile
+    if CADDYFILE_DNS="$(awk '/disable_http_challenge/ { print "            dns desec {"; print "                token {env.DESEC_TOKEN}"; print "            }"; next } { print }' /Caddyfile)"; then
+        echo "$CADDYFILE_DNS" > /Caddyfile
     else
         echo "ERROR: Failed to apply deSEC DNS challenge configuration"
         exit 1
