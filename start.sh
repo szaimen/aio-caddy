@@ -14,7 +14,7 @@ set -x
 
 # Add check for default admin user
 if ! [ -d "/nextcloud/admin" ]; then
-    echo "The default Nextcloud admin user doees not seem to exist anymore."
+    echo "The default Nextcloud admin user does not seem to exist anymore."
     echo "This is not supported by this container!"
     exit 1
 fi
@@ -32,8 +32,8 @@ IPv4_ADDRESS="$(echo "$IPv4_ADDRESS" | sed 's|[0-9]\+$|0/16|')"
 CADDYFILE="$(sed "s|trusted_proxies.*|trusted_proxies static $IPv4_ADDRESS|" /Caddyfile)"
 echo "$CADDYFILE" > /Caddyfile
 
-ALLOW_CONTRIES="$(head -n 1 /nextcloud/admin/files/nextcloud-aio-caddy/allowed-countries.txt)"
-if echo "$ALLOW_CONTRIES" | grep -q '^[A-Z ]\+$'; then
+ALLOW_COUNTRIES="$(head -n 1 /nextcloud/admin/files/nextcloud-aio-caddy/allowed-countries.txt)"
+if echo "$ALLOW_COUNTRIES" | grep -q '^[A-Z ]\+$'; then
     FILTER_SET=1
 fi
 if [ -f "/nextcloud/admin/files/nextcloud-aio-caddy/GeoLite2-Country.mmdb" ]; then
@@ -302,12 +302,24 @@ fi
 if [ -n "$(dig A +short nextcloud-aio-talk)" ] && ! grep -q nextcloud-aio-talk /Caddyfile; then
     cat << CADDY > /tmp/turn.config
             layer4 {
-                @turn not tls
-                route @turn {
-                        proxy nextcloud-aio-talk:443
-                    }
-                route
-            }
+					# Match all connections that do NOT start with a TLS handshake
+					# Plain (unencrypted) TURN/STUN traffic goes directly to eturnal
+					# This serves as fallback for clients that do not support TURNS
+					@notls not tls
+					route @notls {
+							proxy nextcloud-aio-talk:443
+					}
+					# Match TURNS traffic by SNI hostname BEFORE terminating TLS
+					# and forward to talk container in plain - bypassing Caddy's virtual hosts below
+					@turn tls sni turn.{$NC_DOMAIN}
+					route @turn {
+							# Terminate TLS and forward to talk container in plain
+							tls
+							proxy nextcloud-aio-talk:443
+					}
+					# All other traffic is passed through to Caddy's TLS handler below
+					# which will route based on the virtual host blocks
+			}
 CADDY
     CADDYFILE="$(sed "/layer4-placeholder/r /tmp/turn.config" /Caddyfile)"
     echo "$CADDYFILE" > /Caddyfile
@@ -316,6 +328,17 @@ CADDY
         CADDYFILE="$(sed "s/# tls-placeholder/tls/" /Caddyfile)"
         echo "$CADDYFILE" > /Caddyfile
     fi
+
+	cat << CADDY >> /Caddyfile
+https://turn.{\$NC_DOMAIN}:443 {
+	# TLS options only, redirect is done in layer4 above
+    tls {
+        issuer acme {
+            disable_http_challenge
+        }
+    }
+}
+CADDY
 fi
 
 if [ -n "$APACHE_IP_BINDING" ] && [ "$APACHE_IP_BINDING" != "@INTERNAL" ] && [ "$APACHE_IP_BINDING" != "0.0.0.0" ] && [ "$APACHE_IP_BINDING" != "127.0.0.1" ] && ! grep -q proxy_protocol /Caddyfile; then
@@ -369,7 +392,7 @@ if [ -d "/nextcloud/admin/files/nextcloud-aio-caddy/caddy-imports" ] && ! grep -
 fi
 
 if [ "$FILTER_SET" = 1 ] && [ "$FILE_THERE" = 1 ]; then
-    CADDYFILE="$(sed "s|allow_countries.*|allow_countries $ALLOW_CONTRIES|;s|# import GEOFILTER|  import GEOFILTER|" /Caddyfile)"
+    CADDYFILE="$(sed "s|allow_countries.*|allow_countries $ALLOW_COUNTRIES|;s|# import GEOFILTER|  import GEOFILTER|" /Caddyfile)"
 else
     CADDYFILE="$(sed "s|  import GEOFILTER|# import GEOFILTER|" /Caddyfile)"
 fi
