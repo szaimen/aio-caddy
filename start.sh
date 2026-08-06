@@ -353,6 +353,42 @@ https://radio.{\$NC_DOMAIN}:443 {
 CADDY
 fi
 
+if [ -n "$(dig A +short nextcloud-aio-glances)" ] && ! grep -q nextcloud-aio-glances /Caddyfile; then
+	 echo "INFO: nextcloud-aio-glances detected, configuring glances endpoint..."
+
+    # Use hardcoded username and environment variable for password
+    GLANCES_USERNAME="glances"
+
+    if [ -n "$NEXTCLOUD_GLANCES_CADDY_PASSWORD" ]; then
+        echo "INFO: Generating password hash for glances authentication..."
+        GLANCES_PASSWORD_HASH=$(caddy hash-password --plaintext "$NEXTCLOUD_GLANCES_CADDY_PASSWORD")
+
+		cat << CADDY >> /Caddyfile
+https://glances.{\$NC_DOMAIN}:443 {
+    # import GEOFILTER
+	
+	reverse_proxy nextcloud-aio-glances:61208
+    # TLS options
+    tls {
+        issuer acme {
+            disable_http_challenge
+        }
+    }
+
+	basic_auth {
+		$GLANCES_USERNAME $GLANCES_PASSWORD_HASH
+	}
+}
+CADDY
+		
+		echo "INFO: glances endpoint configuration completed successfully"
+	else
+        echo "WARNING: NEXTCLOUD_GLANCES_CADDY_PASSWORD environment variable not set"
+        echo "WARNING: Skipping glances endpoint configuration - authentication required"
+    fi
+
+fi
+
 # Import custom caddy configs that can be changed by the admin.
 # This is the legacy import to preserve compatibility with older installations.
 # This needs to be maintained in the caddy container.
