@@ -353,6 +353,37 @@ https://radio.{\$NC_DOMAIN}:443 {
 CADDY
 fi
 
+if [ -n "$(dig A +short nextcloud-aio-uptime-kuma)" ] && ! grep -q nextcloud-aio-uptime-kuma /Caddyfile; then
+    cat << CADDY >> /Caddyfile
+https://status.{\$NC_DOMAIN}:443 {
+    # import GEOFILTER
+CADDY
+
+if [ -f /nextcloud/admin/files/nextcloud-aio-caddy/allowed-IPs-uptime-kuma.txt ]; then 
+        ALLOWED_IPS_UPTIME=$(cat /nextcloud/admin/files/nextcloud-aio-caddy/allowed-IPs-uptime-kuma.txt)
+        if [ -n "$ALLOWED_IPS_UPTIME" ]; then
+            cat << CADDY >> /Caddyfile
+        @public_networks not remote_ip $ALLOWED_IPS_UPTIME
+        respond @public_networks 403 {
+            close
+        }
+CADDY
+        fi
+    fi
+
+    cat << CADDY >> /Caddyfile
+    reverse_proxy uptime-kuma:3001
+    # TLS options
+    tls {
+        issuer acme {
+            disable_http_challenge
+        }
+    }
+
+CADDY
+fi
+
+
 # Import custom caddy configs that can be changed by the admin.
 # This is the legacy import to preserve compatibility with older installations.
 # This needs to be maintained in the caddy container.
