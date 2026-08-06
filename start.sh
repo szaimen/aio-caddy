@@ -360,7 +360,7 @@ https://status.{\$NC_DOMAIN}:443 {
 CADDY
 
 if [ -f /nextcloud/admin/files/nextcloud-aio-caddy/allowed-IPs-uptime-kuma.txt ]; then 
-        ALLOWED_IPS_LLDAP=$(cat /nextcloud/admin/files/nextcloud-aio-caddy/allowed-IPs-uptime-kuma.txt)
+        ALLOWED_IPS_UPTIME=$(cat /nextcloud/admin/files/nextcloud-aio-caddy/allowed-IPs-uptime-kuma.txt)
         if [ -n "$ALLOWED_IPS_UPTIME" ]; then
             cat << CADDY >> /Caddyfile
         @public_networks not remote_ip $ALLOWED_IPS_UPTIME
