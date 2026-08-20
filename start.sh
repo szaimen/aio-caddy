@@ -335,6 +335,22 @@ CADDY
     fi
 fi
 
+if [ -n "$(dig A +short nextcloud-aio-gitea)" ] && ! grep -q nextcloud-aio-gitea /Caddyfile; then
+    cat << CADDY >> /Caddyfile
+https://git.{\$NC_DOMAIN}:443 {
+    # import GEOFILTER
+    reverse_proxy nextcloud-aio-gitea:3000
+
+    # TLS options
+    tls {
+        issuer acme {
+            disable_http_challenge
+        }
+    }
+}
+CADDY
+fi
+
 if [ -n "$(dig A +short nextcloud-aio-azuracast)" ] && ! grep -q nextcloud-aio-azuracast /Caddyfile; then
     cat << CADDY >> /Caddyfile
 https://radio.{\$NC_DOMAIN}:443 {
