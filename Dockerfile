@@ -2,14 +2,14 @@ FROM caddy:2.11.4-builder-alpine AS builder
 
 ENV CADDY_MAXMIND_VERSION=v1.0.3
 ENV CADDY_L4_VERSION=v0.1.1
-ENV CADDY_DESEC_DNS_HASH=2b5f3e5f5585b1a3d60ddfdd652324d576f5a5a7
+ENV CADDY_DESEC_DNS_VERSION=v1.1.0
 
 WORKDIR /usr/bin
 
 RUN set -ex; \
     xcaddy build --with github.com/porech/caddy-maxmind-geolocation@"$CADDY_MAXMIND_VERSION" \
         --with github.com/mholt/caddy-l4@"$CADDY_L4_VERSION" \
-        --with github.com/caddy-dns/desec@"$CADDY_DESEC_DNS_HASH"; \
+        --with github.com/caddy-dns/desec@"$CADDY_DESEC_DNS_VERSION"; \
     /usr/bin/caddy list-modules
 
 FROM alpine:3.24.1
