@@ -39,13 +39,15 @@ jobs:
         )"
         sed -i "s|^ENV CADDY_L4_VERSION.*$|ENV CADDY_L4_VERSION=$CADDY_L4_VERSION|" ./Dockerfile
 
-        # CADDY_DESEC_DNS_HASH
-        CADDY_DESEC_DNS_HASH="$(
-          git ls-remote https://github.com/soju841/caddy-dns-desec main \
-            | cut -f1 \
+        # CADDY_DESEC_DNS_VERSION
+        CADDY_DESEC_DNS_VERSION="$(
+          git ls-remote --tags --refs https://github.com/caddy-dns/desec 'v*' \
+            | cut -d/ -f3 \
+            | sort -V \
+            | grep -E "^v[0-9\.]+$" \
             | tail -1
         )"
-        sed -i "s|^ENV CADDY_DESEC_DNS_HASH.*$|ENV CADDY_DESEC_DNS_HASH=$CADDY_DESEC_DNS_HASH|" ./Dockerfile
+        sed -i "s|^ENV CADDY_DESEC_DNS_VERSION.*$|ENV CADDY_DESEC_DNS_VERSION=$CADDY_DESEC_DNS_VERSION|" ./Dockerfile
 
         cat ./Dockerfile
 
