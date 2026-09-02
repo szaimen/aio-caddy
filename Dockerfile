@@ -9,7 +9,7 @@ WORKDIR /usr/bin
 RUN set -ex; \
     xcaddy build --with github.com/porech/caddy-maxmind-geolocation@"$CADDY_MAXMIND_VERSION" \
         --with github.com/mholt/caddy-l4@"$CADDY_L4_VERSION" \
-        --with github.com/soju841/caddy-dns-desec@"$CADDY_DESEC_DNS_HASH"; \
+        --with github.com/caddy-dns/desec@"$CADDY_DESEC_DNS_HASH"; \
     /usr/bin/caddy list-modules
 
 FROM alpine:3.24.1

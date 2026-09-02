@@ -41,7 +41,7 @@ jobs:
 
         # CADDY_DESEC_DNS_HASH
         CADDY_DESEC_DNS_HASH="$(
-          git ls-remote https://github.com/soju841/caddy-dns-desec main \
+          git ls-remote https://github.com/caddy-dns/desec main \
             | cut -f1 \
             | tail -1
         )"
