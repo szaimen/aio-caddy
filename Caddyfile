@@ -27,6 +27,7 @@
             allow_countries
         }
         not remote_ip private_ranges
+        not remote_ip $CUSTOM_IP_WHITELIST
         # Exclude IP-address of scan.nexcloud.com so that scanning still works
         not remote_ip 95.217.53.149
     }
