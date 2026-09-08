@@ -32,6 +32,12 @@ IPv4_ADDRESS="$(echo "$IPv4_ADDRESS" | sed 's|[0-9]\+$|0/16|')"
 CADDYFILE="$(sed "s|trusted_proxies.*|trusted_proxies static $IPv4_ADDRESS|" /Caddyfile)"
 echo "$CADDYFILE" > /Caddyfile
 
+if [ -f /nextcloud/admin/files/nextcloud-aio-caddy/whitelist-IPs.txt ]; then
+      CUSTOM_IP_WHITELIST=$(cat /nextcloud/admin/files/nextcloud-aio-caddy/whitelist-IPs.txt)
+      CADDYFILE="$(sed "s|# customWhitelist|not remote_ip $CUSTOM_IP_WHITELIST|" /Caddyfile)"
+      echo "$CADDYFILE" > /Caddyfile
+fi
+
 ALLOW_CONTRIES="$(head -n 1 /nextcloud/admin/files/nextcloud-aio-caddy/allowed-countries.txt)"
 if echo "$ALLOW_CONTRIES" | grep -q '^[A-Z ]\+$'; then
     FILTER_SET=1
@@ -43,11 +49,6 @@ if [ -f "/nextcloud/admin/files/nextcloud-aio-caddy/GeoLite2-Country.mmdb" ]; th
 fi
 if [ -f "/nextcloud/admin/files/nextcloud-aio-caddy/block-vaultwarden-admin" ]; then
     VAULTWARDEN_BLOCK=1
-fi
-if [ -f /nextcloud/admin/files/nextcloud-aio-caddy/whitelist-IPs.txt ]; then
-      CUSTOM_IP_WHITELIST=$(cat /nextcloud/admin/files/nextcloud-aio-caddy/whitelist-IPs.txt)
-    else
-      CUSTOM_IP_WHITELIST=""
 fi
 
 if [ -n "$(dig A +short nextcloud-aio-vaultwarden)" ] && ! grep -q nextcloud-aio-vaultwarden /Caddyfile; then
