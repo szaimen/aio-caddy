@@ -45,7 +45,7 @@ if [ -f "/nextcloud/admin/files/nextcloud-aio-caddy/block-vaultwarden-admin" ]; 
     VAULTWARDEN_BLOCK=1
 fi
 if [ -f /nextcloud/admin/files/nextcloud-aio-caddy/whitelist-IPs.txt ]; then
-      CUSTOM_IP_WHITELIST=$(cat /nextcloud/admin/files/nextcloud-aio-caddy/whitelist-IPs.tx)
+      CUSTOM_IP_WHITELIST=$(cat /nextcloud/admin/files/nextcloud-aio-caddy/whitelist-IPs.txt)
     else
       CUSTOM_IP_WHITELIST=""
 fi
