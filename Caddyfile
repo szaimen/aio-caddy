@@ -27,6 +27,8 @@
             allow_countries
         }
         not remote_ip private_ranges
+        # Exclude reserved IP range, which P2P VPNs are using (Netbird, Tailscaile, etc.)
+        not remote_ip 100.64.0.0/10
         # Exclude IP-address of scan.nexcloud.com so that scanning still works
         not remote_ip 95.217.53.149
     }
