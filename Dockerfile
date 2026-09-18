@@ -12,7 +12,7 @@ RUN set -ex; \
         --with github.com/caddy-dns/desec@"$CADDY_DESEC_DNS_VERSION"; \
     /usr/bin/caddy list-modules
 
-FROM alpine:3.24.1
+FROM alpine:3.24.2
 
 # hadolint ignore=DL3018
 RUN set -ex; \
