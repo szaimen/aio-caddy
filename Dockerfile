@@ -1,4 +1,4 @@
-FROM caddy:2.11.4-builder-alpine AS builder
+FROM caddy:2.11.6-builder-alpine AS builder
 
 ENV CADDY_MAXMIND_VERSION=v1.0.3
 ENV CADDY_L4_VERSION=v0.1.1
