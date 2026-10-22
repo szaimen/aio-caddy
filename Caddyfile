@@ -31,6 +31,7 @@
         not remote_ip 100.64.0.0/10
         # Exclude IP-address of scan.nexcloud.com so that scanning still works
         not remote_ip 95.217.53.149
+        # not remote_ip extra_networks
     }
     respond @geofilter "Access denied" 403 {
 		close

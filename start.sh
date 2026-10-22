@@ -41,6 +41,15 @@ if [ -f "/nextcloud/admin/files/nextcloud-aio-caddy/GeoLite2-Country.mmdb" ]; th
     cp /nextcloud/admin/files/nextcloud-aio-caddy/GeoLite2-Country.mmdb /data/
     FILE_THERE=1
 fi
+
+if [ -f /nextcloud/admin/files/nextcloud-aio-caddy/allowed-IPs.txt ]; then
+    ALLOWED_IPS=$(head -n 1 /nextcloud/admin/files/nextcloud-aio-caddy/allowed-IPs.txt)
+    if [ -n "$ALLOWED_IPS" ]; then
+       CADDYFILE="$(sed "s#\# not remote_ip extra_networks#not remote_ip $ALLOWED_IPS#" /Caddyfile)"
+       echo "$CADDYFILE" > /Caddyfile
+    fi
+fi
+
 if [ -f "/nextcloud/admin/files/nextcloud-aio-caddy/block-vaultwarden-admin" ]; then
     VAULTWARDEN_BLOCK=1
 fi
