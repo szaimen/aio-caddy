@@ -45,7 +45,7 @@ fi
 if [ -f /nextcloud/admin/files/nextcloud-aio-caddy/allowed-IPs.txt ]; then
     ALLOWED_IPS=$(head -n 1 /nextcloud/admin/files/nextcloud-aio-caddy/allowed-IPs.txt)
     if [ -n "$ALLOWED_IPS" ]; then
-       CADDYFILE="$(sed "s/# not remote_ip extra_networks/not remote_ip $ALLOWED_IPS/" /Caddyfile)"
+       CADDYFILE="$(sed "s#\# not remote_ip extra_networks#not remote_ip $ALLOWED_IPS#" /Caddyfile)"
        echo "$CADDYFILE" > /Caddyfile
     fi
 fi
