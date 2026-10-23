@@ -16,6 +16,7 @@ FROM alpine:3.24.2
 
 # hadolint ignore=DL3018
 RUN set -ex; \
+    apk upgrade --no-cache -a; \
     apk add --no-cache shadow; \
     groupdel www-data; \
     addgroup -g 33 -S www-data; \
