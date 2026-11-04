@@ -33,6 +33,7 @@ COPY --from=builder /usr/bin/caddy /usr/local/bin/caddy
 COPY --chmod=775 start.sh /start.sh
 COPY --chown=33:33 Caddyfile /Caddyfile
 
+# hadolint ignore=DL3066
 USER www-data
 ENTRYPOINT [ "/start.sh" ]
 
