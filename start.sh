@@ -180,6 +180,22 @@ CADDY
 CADDY
 fi
 
+if [ -n "$(dig A +short nextcloud-aio-authelia)" ] && ! grep -q nextcloud-aio-authelia /Caddyfile; then
+    cat << CADDY >> /Caddyfile
+https://auth.{\$NC_DOMAIN}:443 {
+    # import GEOFILTER
+    reverse_proxy nextcloud-aio-authelia:9091
+
+    # TLS options
+    tls {
+        issuer acme {
+            disable_http_challenge
+        }
+    }
+}
+CADDY
+fi
+
 if [ -n "$(dig A +short nextcloud-aio-nocodb)" ] && ! grep -q nextcloud-aio-nocodb /Caddyfile; then
     cat << CADDY >> /Caddyfile
 https://tables.{\$NC_DOMAIN}:443 {
