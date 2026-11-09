@@ -367,6 +367,32 @@ https://git.{\$NC_DOMAIN}:443 {
 CADDY
 fi
 
+if [ -n "$(dig A +short nextcloud-aio-openproject)" ] && ! grep -q nextcloud-aio-openproject /Caddyfile; then
+    cat << CADDY >> /Caddyfile
+https://openproject.{\$NC_DOMAIN}:443 {
+    # The geofilter is imported in each handle block since respond would otherwise run after handle
+
+    # Real-time collaboration server for documents
+    handle_path /hocuspocus* {
+        # import GEOFILTER
+        reverse_proxy nextcloud-aio-openproject:1234
+    }
+
+    handle {
+        # import GEOFILTER
+        reverse_proxy nextcloud-aio-openproject:8060
+    }
+
+    # TLS options
+    tls {
+        issuer acme {
+            disable_http_challenge
+        }
+    }
+}
+CADDY
+fi
+
 if [ -n "$(dig A +short nextcloud-aio-azuracast)" ] && ! grep -q nextcloud-aio-azuracast /Caddyfile; then
     cat << CADDY >> /Caddyfile
 https://radio.{\$NC_DOMAIN}:443 {
